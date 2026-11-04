@@ -51,7 +51,14 @@ class CameraPermissionDeniedTest {
         val deny = Pattern.compile(".*permission_deny.*button")
         val button = E2e.device.wait(Until.findObject(By.res(deny)), 15_000)
             ?: E2e.device.wait(Until.findObject(By.text(Pattern.compile("(?i)don.t allow|deny|ne pas autoriser|refuser"))), 5_000)
-        assertTrue("system permission dialog shown ($step)", button != null)
+        if (button == null) {
+            // Diagnostics in the failure message: CI artifacts may not be reachable.
+            val dump = java.io.ByteArrayOutputStream().also { E2e.device.dumpWindowHierarchy(it) }.toString()
+            val texts = Regex("text=\"([^\"]+)\"").findAll(dump).map { it.groupValues[1] }.toList()
+            val ids = Regex("resource-id=\"([^\"]+)\"").findAll(dump).map { it.groupValues[1] }.filter { it.isNotEmpty() }.toList()
+            java.io.File(E2e.outputDir, "perm-$step-hierarchy.xml").writeText(dump)
+            assertTrue("system permission dialog not found ($step). package=${E2e.device.currentPackageName} texts=$texts ids=$ids", false)
+        }
         E2e.screenshot("perm-$step-dialog")
         button!!.click()
         E2e.device.waitForIdle()
