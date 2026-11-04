@@ -5,11 +5,11 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.simpletools.core.common.AppConfig
 import com.simpletools.core.designsystem.theme.SimpleToolsTheme
 import com.simpletools.core.privacy.PrivacyDeclaration
-import org.junit.Assert.assertTrue
+import com.simpletools.feature.scanner.ScannerDependencies
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,46 +20,52 @@ class SimpleToolsAppNavigationTest {
     @get:Rule
     val composeRule = createComposeRule()
 
-    private var onboardingFinished = false
-
-    private fun launch(onboardingEnabled: Boolean, onboardingCompleted: Boolean = false) {
-        val config = buildConfigAppConfig().let {
-            it.copy(features = it.features.copy(onboarding = onboardingEnabled))
-        }
+    private fun launch() {
+        val config = buildConfigAppConfig()
+        val scanner = ScannerDependencies.create(ApplicationProvider.getApplicationContext())
         composeRule.setContent {
             SimpleToolsTheme {
                 SimpleToolsApp(
                     appConfig = config,
                     privacyDeclaration = PrivacyDeclaration.from(config),
                     settingsRepository = FakeSettingsRepository(),
-                    onboardingCompleted = onboardingCompleted,
-                    onOnboardingFinished = { onboardingFinished = true },
+                    scanner = scanner,
+                    onboardingCompleted = false,
+                    onOnboardingFinished = {},
                 )
             }
         }
     }
 
     @Test
-    fun `first launch shows onboarding then the main utility`() {
-        launch(onboardingEnabled = true)
+    fun `the scanner opens directly, without onboarding`() {
+        launch()
 
-        composeRule.onNodeWithText("Get started").performClick()
-
-        assertTrue(onboardingFinished)
-        composeRule.onNodeWithText("Your tool starts here").assertExists()
-        composeRule.onNodeWithText("Get started").assertDoesNotExist()
+        composeRule.waitUntil(5_000) {
+            composeRule.onAllNodes(androidx.compose.ui.test.hasText("Scan your first page")).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onNodeWithText("Scan a page").assertExists()
     }
 
     @Test
-    fun `completed onboarding opens the main utility directly`() {
-        launch(onboardingEnabled = true, onboardingCompleted = true)
+    fun `scan a page asks for the camera before using it`() {
+        launch()
+        composeRule.waitUntil(5_000) {
+            composeRule.onAllNodes(androidx.compose.ui.test.hasText("Scan a page")).fetchSemanticsNodes().isNotEmpty()
+        }
 
-        composeRule.onNodeWithText("Your tool starts here").assertExists()
+        composeRule.onNodeWithText("Scan a page").performClick()
+
+        composeRule.onNodeWithText("Camera access").assertExists()
+        composeRule.onNodeWithText("Allow camera").assertExists()
+        composeRule.onNodeWithText("Import a photo").assertExists()
+        composeRule.onNodeWithContentDescription("Back").performClick()
+        composeRule.onNodeWithText("Scan your first page").assertExists()
     }
 
     @Test
-    fun `settings, privacy and about are reachable and back returns home`() {
-        launch(onboardingEnabled = false)
+    fun `settings, privacy and about are reachable and back returns to the document`() {
+        launch()
 
         composeRule.onNodeWithContentDescription("Settings").performClick()
         composeRule.onNodeWithText("Appearance").assertExists()
@@ -73,6 +79,8 @@ class SimpleToolsAppNavigationTest {
         composeRule.onNodeWithContentDescription("Back").performClick()
 
         composeRule.onNodeWithContentDescription("Back").performClick()
-        composeRule.onNodeWithText("Your tool starts here").assertExists()
+        composeRule.waitUntil(5_000) {
+            composeRule.onAllNodes(androidx.compose.ui.test.hasText("Scan your first page")).fetchSemanticsNodes().isNotEmpty()
+        }
     }
 }

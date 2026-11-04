@@ -3,5 +3,5 @@
     <!-- Window background shown before the first Compose frame (matches the M3 surface). -->
     <color name="window_background">#FFFEF7FF</color>
     <!-- Branding: launcher icon background. -->
-    <color name="ic_launcher_background">#FF3457D5</color>
+    <color name="ic_launcher_background">#FFB35300</color>
 </resources>

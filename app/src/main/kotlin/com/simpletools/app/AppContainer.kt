@@ -11,6 +11,7 @@ import com.simpletools.core.common.AppConfig
 import com.simpletools.core.privacy.PrivacyDeclaration
 import com.simpletools.core.settings.DataStoreSettingsRepository
 import com.simpletools.core.settings.SettingsRepository
+import com.simpletools.feature.scanner.ScannerDependencies
 
 /**
  * Application-wide dependencies. This is the single place where a product swaps the
@@ -24,6 +25,9 @@ class AppContainer(context: Context) {
 
     val settingsRepository: SettingsRepository =
         DataStoreSettingsRepository.create(context.applicationContext.filesDir)
+
+    /** The document being scanned, its private files and the image/PDF engines. */
+    val scanner: ScannerDependencies = ScannerDependencies.create(context)
 
     // Optional integrations: no-op by default, so no third-party SDK is shipped.
     // See docs/MONETIZATION.md to enable them in a product.

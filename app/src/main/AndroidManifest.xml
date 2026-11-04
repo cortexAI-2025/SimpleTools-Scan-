@@ -2,11 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
-        Permissions: the template declares none.
-        Add only what an active feature needs, and list it in permissions.declared
-        (simpletools.properties). `./gradlew :app:check` fails if the two differ.
-        No INTERNET permission: SimpleTools apps are local-first.
+        Only the camera, requested when the user takes a photo of a page.
+        No INTERNET permission: photos and PDFs never leave the device unless the user shares them.
+        Must match permissions.declared in simpletools.properties (checked by the build).
     -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Without a camera, pages can still be imported from photos. -->
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false" />
 
     <application
         android:name=".SimpleToolsApplication"

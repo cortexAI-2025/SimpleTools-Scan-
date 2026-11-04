@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The CAMERA permission is declared by the app (permissions.declared), not here. -->
+
+    <!-- Detects SimpleTools PDF to offer "Open in SimpleTools PDF" (Android 11+ package visibility). -->
+    <queries>
+        <package android:name="com.simpletools.pdf" />
+        <package android:name="com.simpletools.pdf.debug" />
+    </queries>
+
+    <application>
+        <!-- Shares exported PDFs from the private cache, read-only, only with the app the user picks. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.scan.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/scan_file_paths" />
+        </provider>
+    </application>
+</manifest>

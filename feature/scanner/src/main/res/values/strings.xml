@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Document (main screen) -->
+    <string name="scan_document_title">Document</string>
+    <string name="scan_settings">Settings</string>
+    <string name="scan_empty_title">Scan your first page</string>
+    <string name="scan_empty_message">Take a photo of a page, adjust its corners, then add more pages and export them as one PDF. Everything stays on your phone.</string>
+    <string name="scan_scan_page">Scan a page</string>
+    <string name="scan_add_page">Add a page</string>
+    <string name="scan_export_pdf">Export PDF</string>
+    <string name="scan_new_document">New document</string>
+    <string name="scan_page_label">Page %1$d</string>
+    <string name="scan_page_image">Page %1$d, corrected</string>
+    <plurals name="scan_page_count">
+        <item quantity="one">%d page</item>
+        <item quantity="other">%d pages</item>
+    </plurals>
+    <string name="scan_move_up">Move page %1$d up</string>
+    <string name="scan_move_down">Move page %1$d down</string>
+    <string name="scan_edit_crop">Adjust crop of page %1$d</string>
+    <string name="scan_retake">Retake page %1$d</string>
+    <string name="scan_delete">Delete page %1$d</string>
+    <string name="scan_delete_title">Delete page %1$d?</string>
+    <string name="scan_delete_message">Its photo is removed from this phone.</string>
+    <string name="scan_delete_confirm">Delete</string>
+    <string name="scan_cancel">Cancel</string>
+    <string name="scan_new_document_title">Start a new document?</string>
+    <string name="scan_new_document_message">All pages of the current document are deleted from this phone. Exported PDFs are not affected.</string>
+    <string name="scan_new_document_confirm">Delete pages</string>
+    <string name="scan_draft_title">Unfinished page</string>
+    <string name="scan_draft_message">You were adjusting a page. Continue where you left off?</string>
+    <string name="scan_draft_continue">Continue</string>
+    <string name="scan_draft_discard">Discard</string>
+
+    <!-- Capture -->
+    <string name="scan_capture_title">Scan a page</string>
+    <string name="scan_retake_title">Retake page</string>
+    <string name="scan_shutter">Take photo</string>
+    <string name="scan_import_photo">Import a photo</string>
+    <string name="scan_torch_on">Turn on the flashlight</string>
+    <string name="scan_torch_off">Turn off the flashlight</string>
+    <string name="scan_capture_hint">Fit the whole page in the frame</string>
+    <string name="scan_processing_photo">Preparing the photo…</string>
+    <string name="scan_camera_rationale">The camera is used only to photograph your pages, while this screen is open. Photos stay on your phone and are never uploaded.</string>
+    <string name="scan_camera_denied">Camera access was refused. You can allow it, or import a photo instead.</string>
+    <string name="scan_camera_permanently_denied">Camera access is turned off for this app. Allow it in the app settings, or import a photo instead.</string>
+    <string name="scan_allow_camera">Allow camera</string>
+    <string name="scan_open_settings">Open settings</string>
+    <string name="scan_camera_unavailable">The camera cannot be used right now. You can import a photo instead.</string>
+    <string name="scan_capture_failed">The photo could not be taken. Please try again.</string>
+    <string name="scan_import_failed">This image could not be opened.</string>
+
+    <!-- Crop -->
+    <string name="scan_crop_title">Adjust corners</string>
+    <string name="scan_preview_title">Preview</string>
+    <string name="scan_crop_hint">Drag the four corners onto the corners of the page.</string>
+    <string name="scan_crop_invalid">The corners must form the outline of the page.</string>
+    <string name="scan_crop_photo">Photo to crop</string>
+    <string name="scan_corner_top_left">Top left corner</string>
+    <string name="scan_corner_top_right">Top right corner</string>
+    <string name="scan_corner_bottom_right">Bottom right corner</string>
+    <string name="scan_corner_bottom_left">Bottom left corner</string>
+    <string name="scan_reset_corners">Reset</string>
+    <string name="scan_show_preview">Preview</string>
+    <string name="scan_rotate">Rotate</string>
+    <string name="scan_adjust_corners">Adjust corners</string>
+    <string name="scan_save_page">Add to document</string>
+    <string name="scan_replace_page">Save page</string>
+    <string name="scan_corrected_preview">Corrected page</string>
+    <string name="scan_saving_page">Saving the page…</string>
+    <string name="scan_save_page_failed">The page could not be saved. Please try again.</string>
+    <string name="scan_leave_title">Leave without saving?</string>
+    <string name="scan_leave_message">This page will not be added to the document.</string>
+    <string name="scan_leave_confirm">Leave</string>
+    <string name="scan_keep_editing">Keep editing</string>
+
+    <!-- Export -->
+    <string name="scan_export_title">Export PDF</string>
+    <string name="scan_file_name">File name</string>
+    <string name="scan_file_name_invalid">Enter a name</string>
+    <string name="scan_default_file_name">Scan %1$s</string>
+    <string name="scan_save_to_device">Save to device</string>
+    <string name="scan_share">Share</string>
+    <string name="scan_open_in_pdf">Open in SimpleTools PDF</string>
+    <string name="scan_exporting">Creating the PDF… page %1$d of %2$d</string>
+    <string name="scan_export_saved">PDF saved: %1$s</string>
+    <string name="scan_export_cancelled">PDF not saved. Your pages are still here.</string>
+    <string name="scan_export_failed_title">Export failed</string>
+    <string name="scan_export_failed_message">The PDF could not be created. Your pages are intact: you can try again, for example in another folder.</string>
+    <string name="scan_try_again">Try again</string>
+    <string name="scan_close">Close</string>
+    <string name="scan_share_chooser">Share PDF</string>
+    <string name="scan_no_app">No app can open this PDF.</string>
+</resources>

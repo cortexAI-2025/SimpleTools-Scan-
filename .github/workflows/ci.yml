@@ -52,10 +52,21 @@ jobs:
       - name: Debug APK
         run: ./gradlew :app:assembleDebug
 
+      - name: Report debug APK size and SHA-256
+        run: |
+          echo "### Debug APK" >> "$GITHUB_STEP_SUMMARY"
+          for f in app/build/outputs/apk/debug/*.apk; do
+            echo "- $(basename "$f"): $(stat -c %s "$f") bytes ($(awk "BEGIN{printf \"%.2f\", $(stat -c %s "$f")/1048576}") MB), sha256 $(sha256sum "$f" | cut -c1-16)…" | tee -a "$GITHUB_STEP_SUMMARY"
+          done
+          aapt=$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | tail -1)
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          "$aapt" dump permissions app/build/outputs/apk/debug/app-debug.apk | tee -a "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v5
         with:
-          name: simpletools-debug-apk
+          name: simpletools-scan-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 14
@@ -89,10 +100,16 @@ jobs:
       - name: Release bundle
         run: ./gradlew :app:bundleRelease
 
+      - name: Release APK size (minified, unsigned)
+        run: |
+          ./gradlew :app:assembleRelease
+          ls -l app/build/outputs/apk/release/*.apk app/build/outputs/bundle/release/*.aab \
+            | awk '{printf "- %s: %d bytes (%.2f MB)\n", $9, $5, $5/1048576}' | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Upload unsigned AAB
         uses: actions/upload-artifact@v5
         with:
-          name: simpletools-release-aab-unsigned
+          name: simpletools-scan-release-aab-unsigned
           path: app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
           retention-days: 7

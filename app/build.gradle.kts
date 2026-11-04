@@ -22,6 +22,7 @@ dependencies {
     implementation(projects.feature.onboarding)
     implementation(projects.feature.settings)
     implementation(projects.feature.about)
+    implementation(projects.feature.scanner)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -43,4 +44,17 @@ dependencies {
     testImplementation(libs.androidx.test.ext.junit)
     testImplementation(libs.robolectric)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+// End-to-end tests on an emulator (see scripts/run-e2e.sh and the "E2E" workflow).
+dependencies {
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.test.uiautomator)
 }

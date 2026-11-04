@@ -23,7 +23,7 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "SimpleTools"
+rootProject.name = "SimpleTools-Scan"
 
 include(":app")
 
@@ -45,3 +45,7 @@ include(":core:billing")
 include(":feature:onboarding")
 include(":feature:settings")
 include(":feature:about")
+
+// SimpleTools Scan
+include(":core:scanengine") // pure Kotlin: geometry, document model, PDF writer
+include(":feature:scanner") // capture, crop, pages, export

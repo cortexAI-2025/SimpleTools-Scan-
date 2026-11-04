@@ -3,8 +3,6 @@ package com.simpletools.app.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.simpletools.app.home.HomeRoute
-import com.simpletools.app.home.homeScreen
 import com.simpletools.core.common.AppConfig
 import com.simpletools.core.privacy.PrivacyDeclaration
 import com.simpletools.core.settings.SettingsRepository
@@ -12,13 +10,16 @@ import com.simpletools.feature.about.aboutScreen
 import com.simpletools.feature.about.navigateToAbout
 import com.simpletools.feature.onboarding.OnboardingRoute
 import com.simpletools.feature.onboarding.onboardingScreen
+import com.simpletools.feature.scanner.ScanDocumentRoute
+import com.simpletools.feature.scanner.ScannerDependencies
+import com.simpletools.feature.scanner.scannerScreens
 import com.simpletools.feature.settings.navigateToPrivacy
 import com.simpletools.feature.settings.navigateToSettings
 import com.simpletools.feature.settings.settingsScreens
 
 /**
- * Top-level navigation. Kept intentionally flat: main utility → settings → privacy/about.
- * A product registers its own screens here (see docs/ADD_FEATURE_MODULE.md).
+ * Navigation of SimpleTools Scan: document (pages) → capture → crop, and settings
+ * (privacy, about) from the top bar.
  */
 @Composable
 fun SimpleToolsNavHost(
@@ -27,6 +28,7 @@ fun SimpleToolsNavHost(
     appConfig: AppConfig,
     privacyDeclaration: PrivacyDeclaration,
     settingsRepository: SettingsRepository,
+    scanner: ScannerDependencies,
     onOnboardingFinished: () -> Unit,
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
@@ -34,12 +36,12 @@ fun SimpleToolsNavHost(
             privacy = privacyDeclaration,
             onFinished = {
                 onOnboardingFinished()
-                navController.navigate(HomeRoute) {
+                navController.navigate(ScanDocumentRoute) {
                     popUpTo(OnboardingRoute) { inclusive = true }
                 }
             },
         )
-        homeScreen(onOpenSettings = navController::navigateToSettings)
+        scannerScreens(deps = scanner, navController = navController, onOpenSettings = navController::navigateToSettings)
         settingsScreens(
             settingsRepository = settingsRepository,
             privacy = privacyDeclaration,

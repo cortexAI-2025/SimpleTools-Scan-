@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Document (écran principal) -->
+    <string name="scan_document_title">Document</string>
+    <string name="scan_settings">Paramètres</string>
+    <string name="scan_empty_title">Numérisez votre première page</string>
+    <string name="scan_empty_message">Photographiez une page, ajustez ses coins, ajoutez d’autres pages puis exportez-les en un seul PDF. Tout reste sur votre téléphone.</string>
+    <string name="scan_scan_page">Numériser une page</string>
+    <string name="scan_add_page">Ajouter une page</string>
+    <string name="scan_export_pdf">Exporter en PDF</string>
+    <string name="scan_new_document">Nouveau document</string>
+    <string name="scan_page_label">Page %1$d</string>
+    <string name="scan_page_image">Page %1$d, corrigée</string>
+    <plurals name="scan_page_count">
+        <item quantity="one">%d page</item>
+        <item quantity="many">%d pages</item>
+        <item quantity="other">%d pages</item>
+    </plurals>
+    <string name="scan_move_up">Monter la page %1$d</string>
+    <string name="scan_move_down">Descendre la page %1$d</string>
+    <string name="scan_edit_crop">Ajuster le recadrage de la page %1$d</string>
+    <string name="scan_retake">Reprendre la page %1$d</string>
+    <string name="scan_delete">Supprimer la page %1$d</string>
+    <string name="scan_delete_title">Supprimer la page %1$d ?</string>
+    <string name="scan_delete_message">Sa photo est effacée de ce téléphone.</string>
+    <string name="scan_delete_confirm">Supprimer</string>
+    <string name="scan_cancel">Annuler</string>
+    <string name="scan_new_document_title">Commencer un nouveau document ?</string>
+    <string name="scan_new_document_message">Toutes les pages du document en cours sont effacées de ce téléphone. Les PDF déjà exportés ne sont pas touchés.</string>
+    <string name="scan_new_document_confirm">Effacer les pages</string>
+    <string name="scan_draft_title">Page non terminée</string>
+    <string name="scan_draft_message">Vous ajustiez une page. Reprendre là où vous en étiez ?</string>
+    <string name="scan_draft_continue">Reprendre</string>
+    <string name="scan_draft_discard">Abandonner</string>
+
+    <!-- Capture -->
+    <string name="scan_capture_title">Numériser une page</string>
+    <string name="scan_retake_title">Reprendre la page</string>
+    <string name="scan_shutter">Prendre la photo</string>
+    <string name="scan_import_photo">Importer une photo</string>
+    <string name="scan_torch_on">Allumer la lampe</string>
+    <string name="scan_torch_off">Éteindre la lampe</string>
+    <string name="scan_capture_hint">Cadrez la page entière</string>
+    <string name="scan_processing_photo">Préparation de la photo…</string>
+    <string name="scan_camera_rationale">La caméra sert uniquement à photographier vos pages, pendant que cet écran est ouvert. Les photos restent sur votre téléphone et ne sont jamais envoyées.</string>
+    <string name="scan_camera_denied">L’accès à la caméra a été refusé. Vous pouvez l’autoriser ou importer une photo.</string>
+    <string name="scan_camera_permanently_denied">L’accès à la caméra est désactivé pour cette application. Autorisez-le dans les paramètres de l’application ou importez une photo.</string>
+    <string name="scan_allow_camera">Autoriser la caméra</string>
+    <string name="scan_open_settings">Ouvrir les paramètres</string>
+    <string name="scan_camera_unavailable">La caméra n’est pas disponible pour le moment. Vous pouvez importer une photo.</string>
+    <string name="scan_capture_failed">La photo n’a pas pu être prise. Réessayez.</string>
+    <string name="scan_import_failed">Cette image n’a pas pu être ouverte.</string>
+
+    <!-- Recadrage -->
+    <string name="scan_crop_title">Ajuster les coins</string>
+    <string name="scan_preview_title">Aperçu</string>
+    <string name="scan_crop_hint">Faites glisser les quatre coins sur les coins de la page.</string>
+    <string name="scan_crop_invalid">Les coins doivent dessiner le contour de la page.</string>
+    <string name="scan_crop_photo">Photo à recadrer</string>
+    <string name="scan_corner_top_left">Coin supérieur gauche</string>
+    <string name="scan_corner_top_right">Coin supérieur droit</string>
+    <string name="scan_corner_bottom_right">Coin inférieur droit</string>
+    <string name="scan_corner_bottom_left">Coin inférieur gauche</string>
+    <string name="scan_reset_corners">Réinitialiser</string>
+    <string name="scan_show_preview">Aperçu</string>
+    <string name="scan_rotate">Pivoter</string>
+    <string name="scan_adjust_corners">Ajuster les coins</string>
+    <string name="scan_save_page">Ajouter au document</string>
+    <string name="scan_replace_page">Enregistrer la page</string>
+    <string name="scan_corrected_preview">Page corrigée</string>
+    <string name="scan_saving_page">Enregistrement de la page…</string>
+    <string name="scan_save_page_failed">La page n’a pas pu être enregistrée. Réessayez.</string>
+    <string name="scan_leave_title">Quitter sans enregistrer ?</string>
+    <string name="scan_leave_message">Cette page ne sera pas ajoutée au document.</string>
+    <string name="scan_leave_confirm">Quitter</string>
+    <string name="scan_keep_editing">Continuer</string>
+
+    <!-- Export -->
+    <string name="scan_export_title">Exporter en PDF</string>
+    <string name="scan_file_name">Nom du fichier</string>
+    <string name="scan_file_name_invalid">Saisissez un nom</string>
+    <string name="scan_default_file_name">Scan %1$s</string>
+    <string name="scan_save_to_device">Enregistrer sur l’appareil</string>
+    <string name="scan_share">Partager</string>
+    <string name="scan_open_in_pdf">Ouvrir dans SimpleTools PDF</string>
+    <string name="scan_exporting">Création du PDF… page %1$d sur %2$d</string>
+    <string name="scan_export_saved">PDF enregistré : %1$s</string>
+    <string name="scan_export_cancelled">PDF non enregistré. Vos pages sont toujours là.</string>
+    <string name="scan_export_failed_title">Échec de l’export</string>
+    <string name="scan_export_failed_message">Le PDF n’a pas pu être créé. Vos pages sont intactes : vous pouvez réessayer, par exemple dans un autre dossier.</string>
+    <string name="scan_try_again">Réessayer</string>
+    <string name="scan_close">Fermer</string>
+    <string name="scan_share_chooser">Partager le PDF</string>
+    <string name="scan_no_app">Aucune application ne peut ouvrir ce PDF.</string>
+</resources>

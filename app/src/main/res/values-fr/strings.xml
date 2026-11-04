@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_open_settings">Paramètres</string>
-    <string name="home_placeholder_title">Votre outil commence ici</string>
-    <string name="home_placeholder_message">Voici l’écran principal de votre application SimpleTools. Remplacez-le par la fonctionnalité du produit : l’utilisateur doit y accéder dès le lancement.</string>
+    <!-- Les textes de SimpleTools Scan sont dans feature/scanner (EN + FR). -->
 </resources>
