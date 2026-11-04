@@ -107,7 +107,7 @@ class ScanRepository(
         val keepSource = draft != null && draft.sourceFile == page.sourceFile
         storage.delete(page.pageFile)
         if (!keepSource) storage.delete(page.sourceFile)
-        val newDraft = if (keepSource) draft!!.copy(replacesPageId = null, ownsSource = true) else draft
+        val newDraft = if (keepSource) draft.copy(replacesPageId = null, ownsSource = true) else draft
         doc.removePage(pageId).copy(draft = newDraft)
     }
 

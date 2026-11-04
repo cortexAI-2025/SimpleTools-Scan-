@@ -17,7 +17,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
+// Tall screen: the lazy list composes every page row.
+@Config(qualifiers = "w411dp-h2000dp")
 @RunWith(AndroidJUnit4::class)
 class DocumentScreenTest {
 

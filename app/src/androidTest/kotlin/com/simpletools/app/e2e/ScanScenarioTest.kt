@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
@@ -27,6 +28,7 @@ import com.simpletools.app.e2e.E2e.waitForText
 import com.simpletools.core.scanengine.Corner
 import com.simpletools.feature.scanner.capture.SHUTTER_TAG
 import com.simpletools.feature.scanner.document.FILE_NAME_TAG
+import com.simpletools.feature.scanner.document.PAGE_LIST_TAG
 import com.simpletools.feature.scanner.edit.CORRECTED_PREVIEW_TAG
 import com.simpletools.feature.scanner.edit.CROP_IMAGE_TAG
 import org.junit.After
@@ -95,8 +97,10 @@ class ScanScenarioTest {
         E2e.screenshot("06-three-pages")
 
         // Order A, B, C → C, A, B.
+        compose.onNodeWithTag(PAGE_LIST_TAG).performScrollToNode(hasContentDescription("Move page 3 up"))
         compose.onNodeWithContentDescription("Move page 3 up").performClick()
         compose.waitForIdle()
+        compose.onNodeWithTag(PAGE_LIST_TAG).performScrollToNode(hasContentDescription("Move page 2 up"))
         compose.onNodeWithContentDescription("Move page 2 up").performClick()
         compose.waitForIdle()
         E2e.screenshot("07-reordered")
