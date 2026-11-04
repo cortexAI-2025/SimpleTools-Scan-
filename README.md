@@ -1,4 +1,49 @@
-# SimpleTools Android Template
+# SimpleTools Scan
+
+> Photographiez vos pages, recadrez-les, réunissez-les en un PDF. Hors ligne, sans compte, sans publicité.
+> *Photograph pages, crop them, combine them into one PDF. Offline, no account, no ads.*
+
+Fifth app of the SimpleTools family, built on
+[SimpleTools-Android-Template](https://github.com/cortexAI-2025/SimpleTools-Android-Template) (`5d36cb5`).
+
+| | |
+|---|---|
+| Application ID | `com.simpletools.scan` (debug: `com.simpletools.scan.debug`) |
+| Permissions | `CAMERA` only, asked when the user takes a photo. **No `INTERNET`.** |
+| Languages | English (default), French |
+| Storage | Photos, pages and the document in private app storage (`filesDir/scan`) |
+
+## V1 scope
+
+| Included | Not in V1 |
+|---|---|
+| Camera capture (CameraX), photo import as fallback | OCR |
+| 4 adjustable corners, perspective correction, 90° rotation, preview | Automatic edge detection |
+| Multi-page document: reorder, delete, retake, re-crop | Filters, cloud, account |
+| PDF export with editable name: system "save as", share sheet, *Open in SimpleTools PDF* | |
+| Document and unfinished crop kept when the app is closed | |
+
+## Modules added to the template
+
+- `core:scanengine` — pure Kotlin: crop quad and homography (`PageTransform`), document model,
+  streaming JPEG→PDF writer (`JpegPdfWriter`, one page at a time, JPEGs embedded without re-encoding).
+- `feature:scanner` — capture, crop editor, document screen, export.
+
+## Checks
+
+```bash
+./gradlew :build-logic:convention:test testDebugUnitTest :app:lintDebug \
+  :app:verifyDebugPermissions :app:verifyReleasePermissions :app:assembleDebug
+# Emulator E2E (airplane mode), with a device/emulator connected:
+./gradlew :app:assembleDebug :app:assembleDebugAndroidTest && scripts/run-e2e.sh
+```
+
+Manual test on a real phone: [docs/TEST_GALAXY_A14.md](docs/TEST_GALAXY_A14.md).
+
+---
+
+# Template documentation
+
 
 > A modular Android app factory built with Kotlin and Jetpack Compose for creating lightweight, fast, privacy-first utility applications.
 
