@@ -19,6 +19,11 @@ adb uninstall "$PKG" >/dev/null 2>&1 || true
 adb uninstall "$PKG.test" >/dev/null 2>&1 || true
 adb install -r "$APK" && adb install -r "$TEST_APK" || { echo "install failed"; exit 1; }
 
+# Let a freshly booted emulator settle, and close any "isn't responding" system dialog.
+sleep 20
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+adb shell input keyevent KEYCODE_HOME || true
+
 # Airplane mode: no network at all during the tests (the app has no INTERNET permission anyway).
 adb shell cmd connectivity airplane-mode enable
 sleep 3

@@ -49,8 +49,14 @@ class CameraPermissionDeniedTest {
 
     private fun refuseInSystemDialog(step: String) {
         val deny = Pattern.compile(".*permission_deny.*button")
-        val button = E2e.device.wait(Until.findObject(By.res(deny)), 15_000)
-            ?: E2e.device.wait(Until.findObject(By.text(Pattern.compile("(?i)don.t allow|deny|ne pas autoriser|refuser"))), 5_000)
+        var button: androidx.test.uiautomator.UiObject2? = null
+        for (attempt in 0 until 4) {
+            // A freshly booted emulator may show "System UI / Launcher isn't responding" over everything.
+            E2e.device.findObject(By.res("android:id/aerr_wait"))?.click()
+            button = E2e.device.wait(Until.findObject(By.res(deny)), 8_000)
+                ?: E2e.device.findObject(By.text(Pattern.compile("(?i)don.t allow|deny|ne pas autoriser|refuser")))
+            if (button != null) break
+        }
         if (button == null) {
             // Diagnostics in the failure message: CI artifacts may not be reachable.
             val dump = java.io.ByteArrayOutputStream().also { E2e.device.dumpWindowHierarchy(it) }.toString()
