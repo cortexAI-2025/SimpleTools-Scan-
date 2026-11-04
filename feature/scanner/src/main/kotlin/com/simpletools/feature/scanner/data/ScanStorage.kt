@@ -11,7 +11,7 @@ import java.util.UUID
  *
  * ```
  * scan/document.json     pages, order, crops and the unfinished page
- * scan/images/*.jpg      upright photos and corrected pages
+ * scan/images/          upright photos and corrected pages (JPEG)
  * cache/scan-exports/    the last exported PDF, shared through FileProvider
  * ```
  */

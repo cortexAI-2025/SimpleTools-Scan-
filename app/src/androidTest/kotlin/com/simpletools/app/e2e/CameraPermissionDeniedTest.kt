@@ -53,7 +53,7 @@ class CameraPermissionDeniedTest {
             ?: E2e.device.wait(Until.findObject(By.text(Pattern.compile("(?i)don.t allow|deny|ne pas autoriser|refuser"))), 5_000)
         assertTrue("system permission dialog shown ($step)", button != null)
         E2e.screenshot("perm-$step-dialog")
-        button.click()
+        button!!.click()
         E2e.device.waitForIdle()
     }
 
