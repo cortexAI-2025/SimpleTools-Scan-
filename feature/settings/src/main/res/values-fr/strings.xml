@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_settings_title">Paramètres</string>
+    <string name="feature_settings_appearance">Apparence</string>
+    <string name="feature_settings_theme_system">Par défaut (système)</string>
+    <string name="feature_settings_theme_light">Clair</string>
+    <string name="feature_settings_theme_dark">Sombre</string>
+    <string name="feature_settings_dynamic_color">Couleurs du fond d’écran</string>
+    <string name="feature_settings_dynamic_color_summary">Adapter les couleurs de l’application à votre fond d’écran</string>
+    <string name="feature_settings_language">Langue</string>
+    <string name="feature_settings_app_language">Langue de l’application</string>
+    <string name="feature_settings_information">Informations</string>
+    <string name="feature_settings_privacy">Confidentialité</string>
+    <string name="feature_settings_privacy_summary">Ce que cette application fait de vos données</string>
+    <string name="feature_settings_privacy_policy">Politique de confidentialité</string>
+    <string name="feature_settings_about">À propos</string>
+</resources>

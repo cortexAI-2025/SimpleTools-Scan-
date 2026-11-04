@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_privacy_no_account">Aucun compte nécessaire</string>
+    <string name="core_privacy_local_only">Fonctionne hors ligne : vos données restent sur votre appareil</string>
+    <string name="core_privacy_uses_network">Certaines fonctionnalités utilisent Internet</string>
+    <string name="core_privacy_no_analytics">Aucun pistage, aucune statistique</string>
+    <string name="core_privacy_analytics">Des statistiques d’utilisation anonymes aident à améliorer l’application</string>
+    <string name="core_privacy_no_ads">Aucune publicité</string>
+    <string name="core_privacy_ads">Contient des publicités</string>
+    <string name="core_privacy_permissions_title">Autorisations</string>
+    <string name="core_privacy_no_permissions">Aucune autorisation particulière nécessaire</string>
+</resources>

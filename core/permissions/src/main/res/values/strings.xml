@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_permissions_allow">Allow</string>
+    <string name="core_permissions_not_now">Not now</string>
+    <string name="core_permissions_open_settings">Open settings</string>
+    <string name="core_permissions_permanently_denied">Access was refused. You can allow it in the app settings.</string>
+
+    <string name="core_permissions_camera_title">Camera access</string>
+    <string name="core_permissions_camera_rationale">The camera is used only while this screen is open. Images are processed on your device and never uploaded.</string>
+    <string name="core_permissions_microphone_title">Microphone access</string>
+    <string name="core_permissions_microphone_rationale">The microphone is used only while you record. Recordings stay on your device.</string>
+    <string name="core_permissions_notifications_title">Notifications</string>
+    <string name="core_permissions_notifications_rationale">Notifications are used only for reminders you set yourself.</string>
+    <string name="core_permissions_activity_title">Physical activity</string>
+    <string name="core_permissions_activity_rationale">Activity data is used to count your steps. It stays on your device.</string>
+</resources>

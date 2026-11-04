@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_onboarding_title">Welcome to %1$s</string>
+    <string name="feature_onboarding_tagline">Fast. Simple. Useful.</string>
+    <string name="feature_onboarding_start">Get started</string>
+</resources>

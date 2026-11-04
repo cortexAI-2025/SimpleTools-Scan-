@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_permissions_allow">Autoriser</string>
+    <string name="core_permissions_not_now">Plus tard</string>
+    <string name="core_permissions_open_settings">Ouvrir les paramètres</string>
+    <string name="core_permissions_permanently_denied">L’accès a été refusé. Vous pouvez l’autoriser dans les paramètres de l’application.</string>
+
+    <string name="core_permissions_camera_title">Accès à l’appareil photo</string>
+    <string name="core_permissions_camera_rationale">L’appareil photo est utilisé uniquement lorsque cet écran est ouvert. Les images sont traitées sur votre appareil et ne sont jamais envoyées.</string>
+    <string name="core_permissions_microphone_title">Accès au micro</string>
+    <string name="core_permissions_microphone_rationale">Le micro est utilisé uniquement pendant l’enregistrement. Les enregistrements restent sur votre appareil.</string>
+    <string name="core_permissions_notifications_title">Notifications</string>
+    <string name="core_permissions_notifications_rationale">Les notifications servent uniquement aux rappels que vous avez définis.</string>
+    <string name="core_permissions_activity_title">Activité physique</string>
+    <string name="core_permissions_activity_rationale">Les données d’activité servent à compter vos pas. Elles restent sur votre appareil.</string>
+</resources>
