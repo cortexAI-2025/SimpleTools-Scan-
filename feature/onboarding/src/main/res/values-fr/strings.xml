@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_onboarding_title">Bienvenue dans %1$s</string>
+    <string name="feature_onboarding_tagline">Rapide. Simple. Utile.</string>
+    <string name="feature_onboarding_start">Commencer</string>
+</resources>

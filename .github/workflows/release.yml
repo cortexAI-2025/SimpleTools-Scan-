@@ -1,0 +1,77 @@
+name: Release
+
+# Builds a signed Android App Bundle for Google Play.
+# Required repository secrets (Settings → Secrets and variables → Actions), see docs/RELEASE.md:
+#   SIMPLETOOLS_KEYSTORE_BASE64   base64 of the upload keystore (.jks)
+#   SIMPLETOOLS_KEYSTORE_PASSWORD keystore password
+#   SIMPLETOOLS_KEY_ALIAS         key alias
+#   SIMPLETOOLS_KEY_PASSWORD      key password
+# The job only runs when the repository variable SIMPLETOOLS_RELEASE_ENABLED is 'true',
+# so template tags (e.g. v0.1.0) and products not yet on Play do not produce failing runs.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false
+
+jobs:
+  bundle:
+    name: Signed release AAB
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: vars.SIMPLETOOLS_RELEASE_ENABLED == 'true'
+    environment: release
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v5
+
+      - name: Restore upload keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.SIMPLETOOLS_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::SIMPLETOOLS_KEYSTORE_BASE64 is not configured. See docs/RELEASE.md."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload.jks"
+          echo "SIMPLETOOLS_KEYSTORE_FILE=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+
+      - name: Test, lint and build signed bundle
+        env:
+          SIMPLETOOLS_KEYSTORE_PASSWORD: ${{ secrets.SIMPLETOOLS_KEYSTORE_PASSWORD }}
+          SIMPLETOOLS_KEY_ALIAS: ${{ secrets.SIMPLETOOLS_KEY_ALIAS }}
+          SIMPLETOOLS_KEY_PASSWORD: ${{ secrets.SIMPLETOOLS_KEY_PASSWORD }}
+        run: ./gradlew testDebugUnitTest :app:lintRelease :app:verifyReleasePermissions :app:bundleRelease
+
+      - name: Verify bundle signature
+        run: |
+          jarsigner -verify app/build/outputs/bundle/release/app-release.aab | tee verify.txt
+          grep -q "jar verified" verify.txt
+
+      - name: Remove keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"
+
+      - name: Upload signed AAB
+        uses: actions/upload-artifact@v5
+        with:
+          name: simpletools-release-aab
+          path: |
+            app/build/outputs/bundle/release/*.aab
+            app/build/outputs/mapping/release/mapping.txt
+          if-no-files-found: error
+
+      # Google Play upload is intentionally not automated yet (Phase 4).
+      # When ready, add a step using a Play service account stored in the
+      # PLAY_SERVICE_ACCOUNT_JSON secret, targeting the internal track first.

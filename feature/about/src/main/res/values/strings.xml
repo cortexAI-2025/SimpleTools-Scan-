@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_about_title">About</string>
+    <string name="feature_about_version">Version %1$s</string>
+    <string name="feature_about_tagline">Fast. Simple. Useful.</string>
+    <string name="feature_about_family">Part of SimpleTools, a family of small, focused apps that respect your privacy: no account, no unnecessary permission, your data stays on your device.</string>
+    <string name="feature_about_privacy_policy">Privacy policy</string>
+</resources>

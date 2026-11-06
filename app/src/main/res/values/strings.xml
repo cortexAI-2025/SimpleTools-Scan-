@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- app_name is generated from app.name in simpletools.properties. -->
+    <!-- The UI text of SimpleTools Scan lives in feature/scanner (EN + FR). -->
+</resources>

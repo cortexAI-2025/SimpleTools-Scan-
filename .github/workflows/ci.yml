@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false
+
+jobs:
+  build:
+    name: Validate, lint, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Repository hygiene (secrets, hard-coded UI text)
+        run: |
+          ./scripts/check-no-secrets.sh
+          ./scripts/check-hardcoded-strings.sh
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # Also validates the Gradle wrapper checksum.
+      - uses: gradle/actions/setup-gradle@v5
+
+      - name: Build logic tests (App Factory configuration)
+        run: ./gradlew :build-logic:convention:test
+
+      - name: Unit tests
+        run: ./gradlew testDebugUnitTest --continue
+
+      - name: Lint
+        run: ./gradlew :app:lintDebug
+
+      - name: Permission audit
+        run: ./gradlew :app:verifyDebugPermissions :app:verifyReleasePermissions
+
+      - name: Debug APK
+        run: ./gradlew :app:assembleDebug
+
+      - name: Report debug APK size and SHA-256
+        run: |
+          echo "### Debug APK" >> "$GITHUB_STEP_SUMMARY"
+          for f in app/build/outputs/apk/debug/*.apk; do
+            echo "- $(basename "$f"): $(stat -c %s "$f") bytes ($(awk "BEGIN{printf \"%.2f\", $(stat -c %s "$f")/1048576}") MB), sha256 $(sha256sum "$f" | cut -c1-16)…" | tee -a "$GITHUB_STEP_SUMMARY"
+          done
+          aapt=$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | tail -1)
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          "$aapt" dump permissions app/build/outputs/apk/debug/app-debug.apk | tee -a "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v5
+        with:
+          name: simpletools-scan-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: reports
+          path: |
+            **/build/reports/
+            **/build/test-results/
+          retention-days: 7
+
+  release-bundle:
+    name: Release AAB (unsigned)
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v5
+
+      # Proves the minified release path works. No signing secret is used on PRs.
+      - name: Release bundle
+        run: ./gradlew :app:bundleRelease
+
+      - name: Release APK size (minified, unsigned)
+        run: |
+          ./gradlew :app:assembleRelease
+          ls -l app/build/outputs/apk/release/*.apk app/build/outputs/bundle/release/*.aab \
+            | awk '{printf "- %s: %d bytes (%.2f MB)\n", $9, $5, $5/1048576}' | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload unsigned AAB
+        uses: actions/upload-artifact@v5
+        with:
+          name: simpletools-scan-release-aab-unsigned
+          path: app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+          retention-days: 7

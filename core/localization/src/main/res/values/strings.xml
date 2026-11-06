@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Language names are written in their own language (endonyms) and never translated. -->
+    <string name="core_localization_language_en" translatable="false">English</string>
+    <string name="core_localization_language_fr" translatable="false">Français</string>
+</resources>

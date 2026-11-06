@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    This module knows how to request permissions but declares NONE.
+    Each product declares only what its features need in app/src/main/AndroidManifest.xml
+    and in permissions.declared (simpletools.properties).
+-->
+<manifest />

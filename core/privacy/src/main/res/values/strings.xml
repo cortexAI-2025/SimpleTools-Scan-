@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_privacy_no_account">No account required</string>
+    <string name="core_privacy_local_only">Works offline: your data stays on your device</string>
+    <string name="core_privacy_uses_network">Some features use the internet</string>
+    <string name="core_privacy_no_analytics">No tracking, no analytics</string>
+    <string name="core_privacy_analytics">Anonymous usage statistics help improve the app</string>
+    <string name="core_privacy_no_ads">No ads</string>
+    <string name="core_privacy_ads">Contains ads</string>
+    <string name="core_privacy_permissions_title">Permissions</string>
+    <string name="core_privacy_no_permissions">No special permission needed</string>
+</resources>

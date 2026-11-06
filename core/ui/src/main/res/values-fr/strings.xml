@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_ui_navigate_back">Retour</string>
+    <string name="core_ui_loading">Chargement…</string>
+    <string name="core_ui_retry">Réessayer</string>
+    <string name="core_ui_error_generic">Une erreur est survenue.</string>
+</resources>
