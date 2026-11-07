@@ -14,4 +14,7 @@
     <string name="feature_settings_privacy_summary">What this app does with your data</string>
     <string name="feature_settings_privacy_policy">Privacy policy</string>
     <string name="feature_settings_about">About</string>
+    <string name="feature_settings_pro_section">SimpleTools Scan</string>
+    <string name="feature_settings_pro_title">SimpleTools Scan PRO</string>
+    <string name="feature_settings_pro_summary">One purchase, offline text recognition and searchable PDF</string>
 </resources>

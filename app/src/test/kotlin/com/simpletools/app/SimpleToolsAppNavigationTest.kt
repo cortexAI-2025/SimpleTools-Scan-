@@ -9,6 +9,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.simpletools.core.designsystem.theme.SimpleToolsTheme
 import com.simpletools.core.privacy.PrivacyDeclaration
+import com.simpletools.core.billing.NoOpBillingRepository
 import com.simpletools.feature.scanner.ScannerDependencies
 import org.junit.Rule
 import org.junit.Test
@@ -30,6 +31,7 @@ class SimpleToolsAppNavigationTest {
                     privacyDeclaration = PrivacyDeclaration.from(config),
                     settingsRepository = FakeSettingsRepository(),
                     scanner = scanner,
+                    billing = NoOpBillingRepository,
                     onboardingCompleted = false,
                     onOnboardingFinished = {},
                 )

@@ -27,6 +27,7 @@ fun NavGraphBuilder.settingsScreens(
     onNavigateBack: () -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenPro: (() -> Unit)? = null,
 ) {
     composable<SettingsRoute> {
         val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.factory(settingsRepository))
@@ -38,6 +39,7 @@ fun NavGraphBuilder.settingsScreens(
             onNavigateBack = onNavigateBack,
             onOpenPrivacy = onOpenPrivacy,
             onOpenAbout = onOpenAbout,
+            onOpenPro = onOpenPro,
         )
     }
     composable<PrivacyRoute> {

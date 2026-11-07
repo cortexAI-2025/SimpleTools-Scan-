@@ -1,37 +1,39 @@
 package com.simpletools.feature.scanner.edit
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -41,13 +43,18 @@ import com.simpletools.core.designsystem.component.SimpleToolsPrimaryButton
 import com.simpletools.core.designsystem.component.SimpleToolsSecondaryButton
 import com.simpletools.core.designsystem.component.SimpleToolsTextButton
 import com.simpletools.core.designsystem.theme.Spacing
+import com.simpletools.core.scanengine.PageContrast
+import com.simpletools.core.scanengine.ScanFilter
 import com.simpletools.core.ui.LoadingState
 import com.simpletools.core.ui.SimpleToolsTopBar
 import com.simpletools.feature.scanner.R
 import com.simpletools.feature.scanner.ScanIcons
+import kotlin.math.roundToInt
+
+private const val CONTRAST_SLIDER_TAG = "scan_contrast_slider"
 
 @Composable
-internal fun EditRoute(viewModel: EditViewModel, onFinished: () -> Unit) {
+internal fun EditRoute(viewModel: EditViewModel, onFinished: () -> Unit, onOpenPro: () -> Unit = {}) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var confirmLeave by rememberSaveable { mutableStateOf(false) }
     val snackbar = remember { SnackbarHostState() }
@@ -58,6 +65,13 @@ internal fun EditRoute(viewModel: EditViewModel, onFinished: () -> Unit) {
         if (state.saveFailed) {
             snackbar.showSnackbar(saveError)
             viewModel.saveErrorShown()
+        }
+    }
+    val notFound = stringResource(R.string.scan_detect_not_found)
+    LaunchedEffect(state.detection) {
+        if (state.detection == DetectionResult.NotFound) {
+            snackbar.showSnackbar(notFound)
+            viewModel.detectionShown()
         }
     }
 
@@ -79,10 +93,15 @@ internal fun EditRoute(viewModel: EditViewModel, onFinished: () -> Unit) {
         onCornerMoved = viewModel::moveCorner,
         onCornerReleased = viewModel::onCornerReleased,
         onReset = viewModel::resetCorners,
+        onDetect = viewModel::detectEdges,
         onShowPreview = viewModel::showPreview,
         onAdjust = viewModel::backToAdjust,
         onRotate = viewModel::rotate,
         onSave = viewModel::save,
+        onFilterSelected = viewModel::setFilter,
+        onContrastChanged = viewModel::setContrast,
+        onContrastReleased = viewModel::onContrastReleased,
+        onOpenPro = onOpenPro,
     )
 
     if (confirmLeave) {
@@ -111,10 +130,15 @@ internal fun EditScreen(
     onCornerMoved: (com.simpletools.core.scanengine.Corner, com.simpletools.core.scanengine.NormalizedPoint) -> Unit,
     onCornerReleased: () -> Unit,
     onReset: () -> Unit,
+    onDetect: () -> Unit,
     onShowPreview: () -> Unit,
     onAdjust: () -> Unit,
     onRotate: () -> Unit,
     onSave: () -> Unit,
+    onFilterSelected: (ScanFilter) -> Unit,
+    onContrastChanged: (Int) -> Unit,
+    onContrastReleased: () -> Unit,
+    onOpenPro: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val preview = state.mode == EditMode.Preview
@@ -134,7 +158,20 @@ internal fun EditScreen(
                         Modifier.fillMaxWidth().navigationBarsPadding().padding(Spacing.md),
                         verticalArrangement = Arrangement.spacedBy(Spacing.sm),
                     ) {
-                        if (preview) PreviewActions(state, onRotate, onAdjust, onSave) else AdjustActions(state, onReset, onShowPreview)
+                        if (preview) {
+                            PreviewActions(
+                                state = state,
+                                onRotate = onRotate,
+                                onAdjust = onAdjust,
+                                onSave = onSave,
+                                onFilterSelected = onFilterSelected,
+                                onContrastChanged = onContrastChanged,
+                                onContrastReleased = onContrastReleased,
+                                onOpenPro = onOpenPro,
+                            )
+                        } else {
+                            AdjustActions(state, onReset, onDetect, onShowPreview)
+                        }
                     }
                 }
             }
@@ -177,7 +214,7 @@ internal fun EditScreen(
 }
 
 @Composable
-private fun AdjustActions(state: EditUiState, onReset: () -> Unit, onShowPreview: () -> Unit) {
+private fun AdjustActions(state: EditUiState, onReset: () -> Unit, onDetect: () -> Unit, onShowPreview: () -> Unit) {
     Text(
         stringResource(if (state.quadValid) R.string.scan_crop_hint else R.string.scan_crop_invalid),
         style = MaterialTheme.typography.bodyMedium,
@@ -187,18 +224,69 @@ private fun AdjustActions(state: EditUiState, onReset: () -> Unit, onShowPreview
     )
     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm), verticalAlignment = Alignment.CenterVertically) {
         SimpleToolsTextButton(stringResource(R.string.scan_reset_corners), onReset)
-        SimpleToolsPrimaryButton(
-            text = stringResource(R.string.scan_show_preview),
-            onClick = onShowPreview,
-            enabled = state.quadValid,
+        SimpleToolsSecondaryButton(
+            text = stringResource(R.string.scan_detect_edges),
+            onClick = onDetect,
+            enabled = !state.detecting && !state.saving,
             icon = ScanIcons.Crop,
             modifier = Modifier.weight(1f),
         )
     }
+    SimpleToolsPrimaryButton(
+        text = stringResource(R.string.scan_show_preview),
+        onClick = onShowPreview,
+        enabled = state.quadValid,
+        icon = ScanIcons.Crop,
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 @Composable
-private fun PreviewActions(state: EditUiState, onRotate: () -> Unit, onAdjust: () -> Unit, onSave: () -> Unit) {
+private fun PreviewActions(
+    state: EditUiState,
+    onRotate: () -> Unit,
+    onAdjust: () -> Unit,
+    onSave: () -> Unit,
+    onFilterSelected: (ScanFilter) -> Unit,
+    onContrastChanged: (Int) -> Unit,
+    onContrastReleased: () -> Unit,
+    onOpenPro: () -> Unit,
+) {
+    // Free: the page filter. The same treatment is saved, so the preview is exactly the result.
+    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm), verticalAlignment = Alignment.CenterVertically) {
+        listOf(
+            ScanFilter.Color to R.string.scan_filter_color,
+            ScanFilter.Grayscale to R.string.scan_filter_grayscale,
+            ScanFilter.BlackAndWhite to R.string.scan_filter_black_white,
+        ).forEach { (filter, label) ->
+            FilterChip(
+                selected = state.filter == filter,
+                onClick = { onFilterSelected(filter) },
+                enabled = !state.saving,
+                label = { Text(stringResource(label)) },
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+    // PRO: contrast. Without PRO the control is shown and leads to the offer, never silently disabled.
+    if (state.proUnlocked) {
+        Column {
+            Text(
+                stringResource(R.string.scan_contrast_value, state.contrast),
+                style = MaterialTheme.typography.labelLarge,
+            )
+            Slider(
+                value = state.contrast.toFloat(),
+                onValueChange = { onContrastChanged(it.roundToInt()) },
+                onValueChangeFinished = onContrastReleased,
+                valueRange = PageContrast.MIN.toFloat()..PageContrast.MAX.toFloat(),
+                enabled = !state.saving,
+                modifier = Modifier.fillMaxWidth().testTag(CONTRAST_SLIDER_TAG),
+            )
+        }
+    } else {
+        SimpleToolsTextButton(stringResource(R.string.scan_contrast_pro), onOpenPro)
+    }
     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
         SimpleToolsSecondaryButton(
             text = stringResource(R.string.scan_rotate),

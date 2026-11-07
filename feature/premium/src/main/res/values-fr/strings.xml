@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pro_title">SimpleTools Scan PRO</string>
+    <string name="pro_tagline">Un seul achat, à vous pour toujours. Pas d\'abonnement.</string>
+
+    <string name="pro_status_active">PRO est débloqué sur cet appareil.</string>
+    <string name="pro_status_offline">PRO est débloqué. L\'achat a été vérifié précédemment : il fonctionne hors ligne.</string>
+    <string name="pro_status_pending">Votre achat attend la confirmation de Google Play.</string>
+    <string name="pro_status_checking">Vérification de la licence…</string>
+    <string name="pro_status_unreachable">La licence ne peut pas être vérifiée pour le moment. Connectez-vous à internet, puis vérifiez à nouveau.</string>
+    <string name="pro_status_unavailable">Les achats ne sont pas disponibles sur cet appareil.</string>
+    <string name="pro_status_not_purchased">PRO n\'est pas débloqué sur ce compte Google.</string>
+    <string name="pro_retry">Vérifier à nouveau</string>
+
+    <string name="pro_compare_title">Gratuit ou PRO</string>
+    <string name="pro_column_free">Gratuit</string>
+    <string name="pro_column_pro">PRO</string>
+    <string name="pro_row_scan">Numériser avec la caméra ou importer une photo</string>
+    <string name="pro_row_edges">Détection automatique des contours, perspective et rotation</string>
+    <string name="pro_row_filters">Filtres couleur, gris et noir et blanc</string>
+    <string name="pro_row_document">Documents multipages, PDF, enregistrement et partage</string>
+    <string name="pro_row_offline">Fonctionne hors ligne, sans compte, sans publicité</string>
+    <string name="pro_row_ocr">Reconnaissance du texte en français et en anglais, hors ligne</string>
+    <string name="pro_row_copy_search">Copier et rechercher le texte reconnu, export TXT</string>
+    <string name="pro_row_searchable_pdf">PDF recherchable avec une couche de texte</string>
+    <string name="pro_row_contrast">Réglage du contraste par page</string>
+    <string name="pro_included">Inclus</string>
+    <string name="pro_not_included">Non inclus</string>
+
+    <string name="pro_price_label">Prix d\'achat définitif</string>
+    <string name="pro_price_unknown">Prix non disponible pour le moment.</string>
+    <string name="pro_price_note">Payé une seule fois, sans abonnement. Le prix est celui affiché par Google Play pour votre pays.</string>
+    <string name="pro_buy">Débloquer PRO</string>
+    <string name="pro_restore">Restaurer mes achats</string>
+
+    <string name="pro_privacy_title">Confidentialité et hors ligne</string>
+    <string name="pro_privacy_body">Vos photos et vos documents ne sont jamais envoyés. La reconnaissance du texte se fait sur ce téléphone, avec un modèle inclus dans l\'application. Les fonctions gratuites n\'ont jamais besoin d\'une connexion. Google Play gère le paiement et indique seulement à l\'application si PRO est acheté ; l\'application ne voit jamais vos coordonnées de paiement.</string>
+
+    <string name="pro_purchase_success">PRO est débloqué. Merci !</string>
+    <string name="pro_purchase_pending">Achat reçu. PRO sera débloqué dès que Google Play l\'aura confirmé.</string>
+    <string name="pro_purchase_failed">L\'achat n\'a pas abouti. Aucun montant n\'a été débité.</string>
+    <string name="pro_store_unavailable">Google Play est injoignable pour le moment. Vérifiez votre connexion et réessayez.</string>
+    <string name="pro_restore_success">Achat restauré. PRO est débloqué.</string>
+    <string name="pro_restore_nothing">Aucun achat PRO n\'a été trouvé sur ce compte Google.</string>
+    <string name="pro_restore_failed">La restauration n\'a pas abouti. Réessayez.</string>
+    <string name="pro_mark_none">—</string>
+</resources>

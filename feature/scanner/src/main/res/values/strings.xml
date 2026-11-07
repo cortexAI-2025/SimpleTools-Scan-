@@ -91,4 +91,32 @@
     <string name="scan_close">Close</string>
     <string name="scan_share_chooser">Share PDF</string>
     <string name="scan_no_app">No app can open this PDF.</string>
+
+    <!-- SimpleTools Scan PRO: edit screen, document, OCR -->
+    <string name="scan_detect_edges">Detect edges</string>
+    <string name="scan_detect_not_found">No page found: adjust the corners by hand.</string>
+    <string name="scan_filter_color">Colour</string>
+    <string name="scan_filter_grayscale">Grey</string>
+    <string name="scan_filter_black_white">B&amp;W</string>
+    <string name="scan_contrast_value">Contrast %1$d %%</string>
+    <string name="scan_contrast_pro">Contrast · PRO</string>
+    <string name="scan_save_searchable">Searchable PDF · PRO</string>
+    <string name="scan_ocr_action">Recognised text (PRO)</string>
+    <string name="scan_ocr_title">Recognised text</string>
+    <string name="scan_ocr_intro">Text is recognised on this phone, without internet, in French and English.</string>
+    <string name="scan_ocr_start">Recognise the text</string>
+    <string name="scan_ocr_resume">Continue recognition</string>
+    <string name="scan_ocr_progress">Page %1$d of %2$d</string>
+    <string name="scan_ocr_failed">A page could not be read. The pages already read are kept; try again.</string>
+    <string name="scan_ocr_empty">No text recognised yet.</string>
+    <string name="scan_ocr_search">Search in the text</string>
+    <string name="scan_ocr_no_hit">No match.</string>
+    <string name="scan_ocr_hit_page">Page %1$d</string>
+    <string name="scan_ocr_copy">Copy the text</string>
+    <string name="scan_ocr_copied">Text copied.</string>
+    <string name="scan_ocr_export_txt">Export TXT</string>
+    <string name="scan_ocr_export_pdf">Searchable PDF</string>
+    <string name="scan_ocr_exported">Saved: %1$s</string>
+    <string name="scan_ocr_export_failed">Export failed. Try again.</string>
+    <string name="scan_ocr_default_name">scan-text</string>
 </resources>

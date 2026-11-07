@@ -92,4 +92,32 @@
     <string name="scan_close">Fermer</string>
     <string name="scan_share_chooser">Partager le PDF</string>
     <string name="scan_no_app">Aucune application ne peut ouvrir ce PDF.</string>
+
+    <!-- SimpleTools Scan PRO : écran d'édition, document, OCR -->
+    <string name="scan_detect_edges">Détecter les contours</string>
+    <string name="scan_detect_not_found">Aucune page détectée : ajustez les coins à la main.</string>
+    <string name="scan_filter_color">Couleur</string>
+    <string name="scan_filter_grayscale">Gris</string>
+    <string name="scan_filter_black_white">N&amp;B</string>
+    <string name="scan_contrast_value">Contraste %1$d %%</string>
+    <string name="scan_contrast_pro">Contraste · PRO</string>
+    <string name="scan_save_searchable">PDF recherchable · PRO</string>
+    <string name="scan_ocr_action">Texte reconnu (PRO)</string>
+    <string name="scan_ocr_title">Texte reconnu</string>
+    <string name="scan_ocr_intro">Le texte est reconnu sur ce téléphone, sans internet, en français et en anglais.</string>
+    <string name="scan_ocr_start">Reconnaître le texte</string>
+    <string name="scan_ocr_resume">Poursuivre la reconnaissance</string>
+    <string name="scan_ocr_progress">Page %1$d sur %2$d</string>
+    <string name="scan_ocr_failed">Une page n\'a pas pu être lue. Les pages déjà lues sont conservées ; réessayez.</string>
+    <string name="scan_ocr_empty">Aucun texte reconnu pour l\'instant.</string>
+    <string name="scan_ocr_search">Rechercher dans le texte</string>
+    <string name="scan_ocr_no_hit">Aucun résultat.</string>
+    <string name="scan_ocr_hit_page">Page %1$d</string>
+    <string name="scan_ocr_copy">Copier le texte</string>
+    <string name="scan_ocr_copied">Texte copié.</string>
+    <string name="scan_ocr_export_txt">Exporter en TXT</string>
+    <string name="scan_ocr_export_pdf">PDF recherchable</string>
+    <string name="scan_ocr_exported">Enregistré : %1$s</string>
+    <string name="scan_ocr_export_failed">Échec de l\'export. Réessayez.</string>
+    <string name="scan_ocr_default_name">scan-texte</string>
 </resources>

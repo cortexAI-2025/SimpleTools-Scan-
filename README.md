@@ -13,32 +13,47 @@ Fifth app of the SimpleTools family, built on
 | Languages | English (default), French |
 | Storage | Photos, pages and the document in private app storage (`filesDir/scan`) |
 
-## V1 scope
+## Scope (V1.3: FREE + PRO)
 
-| Included | Not in V1 |
+| FREE, free for life | PRO, one purchase of 3,99 € (no subscription) |
 |---|---|
-| Camera capture (CameraX), photo import as fallback | OCR |
-| 4 adjustable corners, perspective correction, 90° rotation, preview | Automatic edge detection |
-| Multi-page document: reorder, delete, retake, re-crop | Filters, cloud, account |
-| PDF export with editable name: system "save as", share sheet, *Open in SimpleTools PDF* | |
-| Document and unfinished crop kept when the app is closed | |
+| Camera capture, photo import | Offline text recognition (OCR), French and English |
+| Automatic page detection, perspective correction, rotation, manual corners | Copy and search the recognised text, TXT export |
+| Colour, grey, black and white filters | Searchable PDF (invisible text layer aligned on the image) |
+| Multi-page documents, reorder, retake, delete | Contrast adjustment per page |
+| PDF export, save, share, *Open in SimpleTools PDF* | |
+| Works offline, no account, no ads, no scan limit | |
+
+Not in V1.3 (planned, not shipped): batch processing, scanning profiles, PDF compression settings, folders,
+advanced search, automatic naming, local backup and restore, advanced sharpness, orientation detection.
+
+| Permissions | Network |
+|---|---|
+| `CAMERA` (asked when a photo is taken), `com.android.vending.BILLING` (PRO purchase) | None. `INTERNET` and `ACCESS_NETWORK_STATE` are removed from the merged manifest. |
 
 ## Modules added to the template
 
-- `core:scanengine` — pure Kotlin: crop quad and homography (`PageTransform`), document model,
-  streaming JPEG→PDF writer (`JpegPdfWriter`, one page at a time, JPEGs embedded without re-encoding).
-- `feature:scanner` — capture, crop editor, document screen, export.
+- `core:scanengine` — pure Kotlin: crop geometry and homography, document model, edge detection
+  (`EdgeDetector`), Otsu threshold and filters, OCR model and search, streaming JPEG→PDF writer with an
+  optional invisible text layer.
+- `feature:scanner` — capture, crop editor (detection, filters, PRO contrast), document, export, PRO text
+  recognition (ML Kit, bundled model).
+- `core:billing` — licence contract and entitlement rules (`Entitlement`), shared by SimpleTools apps.
+- `core:billing-play` — Google Play Billing for the one-time product `simpletools_scan_pro_lifetime`.
+- `feature:premium` — SimpleTools Scan PRO screen.
 
 ## Checks
 
 ```bash
 ./gradlew :build-logic:convention:test testDebugUnitTest :app:lintDebug \
-  :app:verifyDebugPermissions :app:verifyReleasePermissions :app:assembleDebug
+  :app:verifyDebugPermissions :app:verifyReleasePermissions :app:assembleDebug :app:bundleRelease
 # Emulator E2E (airplane mode), with a device/emulator connected:
 ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest && scripts/run-e2e.sh
 ```
 
 Manual test on a real phone: [docs/TEST_GALAXY_A14.md](docs/TEST_GALAXY_A14.md).
+Purchase set-up in the Play Console: [docs/PLAY_CONSOLE.md](docs/PLAY_CONSOLE.md).
+Release notes (FR/EN): [docs/RELEASE_NOTES.md](docs/RELEASE_NOTES.md).
 
 ---
 

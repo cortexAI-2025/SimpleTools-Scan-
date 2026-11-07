@@ -13,6 +13,9 @@ import com.simpletools.feature.onboarding.onboardingScreen
 import com.simpletools.feature.scanner.ScanDocumentRoute
 import com.simpletools.feature.scanner.ScannerDependencies
 import com.simpletools.feature.scanner.scannerScreens
+import com.simpletools.core.billing.BillingRepository
+import com.simpletools.feature.premium.navigateToPremium
+import com.simpletools.feature.premium.premiumScreen
 import com.simpletools.feature.settings.navigateToPrivacy
 import com.simpletools.feature.settings.navigateToSettings
 import com.simpletools.feature.settings.settingsScreens
@@ -29,6 +32,7 @@ fun SimpleToolsNavHost(
     privacyDeclaration: PrivacyDeclaration,
     settingsRepository: SettingsRepository,
     scanner: ScannerDependencies,
+    billing: BillingRepository,
     onOnboardingFinished: () -> Unit,
 ) {
     NavHost(navController = navController, startDestination = startDestination) {
@@ -41,13 +45,20 @@ fun SimpleToolsNavHost(
                 }
             },
         )
-        scannerScreens(deps = scanner, navController = navController, onOpenSettings = navController::navigateToSettings)
+        scannerScreens(
+            deps = scanner,
+            navController = navController,
+            onOpenSettings = navController::navigateToSettings,
+            onOpenPro = navController::navigateToPremium,
+        )
+        premiumScreen(billing = billing, onNavigateBack = navController::navigateUp)
         settingsScreens(
             settingsRepository = settingsRepository,
             privacy = privacyDeclaration,
             onNavigateBack = navController::navigateUp,
             onOpenPrivacy = navController::navigateToPrivacy,
             onOpenAbout = navController::navigateToAbout,
+            onOpenPro = navController::navigateToPremium,
         )
         aboutScreen(
             versionName = appConfig.versionName,

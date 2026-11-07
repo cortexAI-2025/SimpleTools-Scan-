@@ -53,3 +53,35 @@ mise au point, lumière réelle, performances avec de grandes photos).
 - Modèle / version One UI, temps approximatif entre déclencheur et écran de recadrage, temps d’export.
 - Netteté du texte, éventuel flou de mise au point, comportement avec le flash (icône éclair).
 - Tout écran figé, message d’erreur ou fermeture inattendue (avec l’étape).
+
+## 6. Contours, filtres (gratuit)
+
+1. Photographier une feuille posée sur une table sombre, puis sur une table claire.
+   - Attendu : les 4 coins sont placés sur la feuille dès l'écran d'ajustement. Si aucune page n'est trouvée,
+     le message « Aucune page détectée » apparaît et les coins par défaut restent.
+2. Taper **Détecter les contours** après avoir déplacé les coins.
+3. Dans l'aperçu : **Couleur**, **Gris**, **N&B** → chaque aperçu correspond à la page enregistrée.
+
+## 7. PRO : reconnaissance, PDF recherchable, contraste (achat requis)
+
+Les étapes 7.2 à 7.5 demandent une licence PRO active. Sans achat réel (produit non encore configuré), vérifier
+seulement que les écrans affichent l'offre et que rien n'est débloqué.
+
+1. **Mode avion activé**, sans achat : taper l'icône *Texte reconnu (PRO)* → l'écran PRO s'ouvre ;
+   le bouton *Débloquer PRO* est désactivé et le prix indique « non disponible ».
+2. Après achat de test (testeur de licence, piste de test interne) : *Texte reconnu* → **Reconnaître le texte**.
+   - Attendu : la progression « Page n sur N » avance, puis le texte apparaît, **avec le mode avion**.
+3. Rechercher un mot présent sur une page (ex. « facture », sans accent) → la page et la ligne apparaissent.
+4. **Copier le texte** → coller dans une note : le texte est identique.
+5. **Exporter en TXT** puis **PDF recherchable** → ouvrir le PDF dans *Mes fichiers* : le texte se sélectionne
+   et se recherche (Ctrl+F / recherche du lecteur), la page reste identique à la photo.
+6. Réglage du **Contraste** (curseur) → l'aperçu change ; après enregistrement, la page a le même contraste.
+7. Redémarrer l'app en mode avion → l'état « Licence active, vérifiée précédemment » reste affiché.
+8. **Restaurer mes achats** après réinstallation avec le même compte Google → PRO revient.
+9. Vérifier que *Partager* et *Enregistrer* (sans PRO) fonctionnent toujours sans achat.
+
+## 8. À noter en plus
+
+- Temps de reconnaissance par page, consommation mémoire perçue, chauffe.
+- **Confidentialité** : pendant l'OCR, aucune connexion ne doit apparaître (vérifier avec un proxy ou
+  *Utilisation des données* si possible) ; à consigner dans la fiche Data safety.

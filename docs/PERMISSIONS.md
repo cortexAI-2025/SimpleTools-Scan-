@@ -39,6 +39,17 @@ user triggers that feature.** The template itself declares none (not even `INTER
 
 To support another one, add an entry with its title/rationale strings (EN + FR) and a test.
 
+## SimpleTools Scan
+
+| Permission | Origin | Why |
+|------------|--------|-----|
+| `CAMERA` | declared by the app | photo of a page |
+| `com.android.vending.BILLING` | Google Play Billing (`core:billing-play`) | one-time PRO purchase and restore |
+| `INTERNET`, `ACCESS_NETWORK_STATE` | **removed** (`tools:node="remove"`) | added by ML Kit's usage-logging transport; the app never uses the network |
+
+The removal is deliberate: the build verifies the merged manifest, so these permissions cannot come back
+silently. If a future dependency needs the network, the build fails and the change must be documented.
+
 ## Files and documents
 
 Do not request storage permissions. Use the Storage Access Framework

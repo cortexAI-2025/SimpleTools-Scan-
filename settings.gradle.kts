@@ -40,11 +40,13 @@ include(":core:localization")
 include(":core:analytics")
 include(":core:ads")
 include(":core:billing")
+include(":core:billing-play") // Google Play Billing implementation (SimpleTools Scan PRO)
 
 // Reusable product-facing features
 include(":feature:onboarding")
 include(":feature:settings")
 include(":feature:about")
+include(":feature:premium") // SimpleTools Scan PRO screen: comparison, price, purchase, restore, licence state
 
 // SimpleTools Scan
 include(":core:scanengine") // pure Kotlin: geometry, document model, PDF writer

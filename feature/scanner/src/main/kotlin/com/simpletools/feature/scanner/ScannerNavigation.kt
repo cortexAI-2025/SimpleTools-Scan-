@@ -11,6 +11,8 @@ import com.simpletools.feature.scanner.document.DocumentRoute
 import com.simpletools.feature.scanner.document.DocumentViewModel
 import com.simpletools.feature.scanner.edit.EditRoute
 import com.simpletools.feature.scanner.edit.EditViewModel
+import com.simpletools.feature.scanner.ocr.OcrRoute
+import com.simpletools.feature.scanner.ocr.OcrViewModel
 import kotlinx.serialization.Serializable
 
 /** Main screen: the pages of the document. Start destination of SimpleTools Scan. */
@@ -25,6 +27,10 @@ data class ScanCaptureRoute(val replacePageId: String? = null)
 @Serializable
 data object ScanEditRoute
 
+/** PRO: text recognition of the document and its search. */
+@Serializable
+data object ScanOcrRoute
+
 /**
  * Document → capture → crop → back to the document. Crop and capture never stay in the back
  * stack once a page is saved, so Back from the document always leaves the app.
@@ -33,6 +39,7 @@ fun NavGraphBuilder.scannerScreens(
     deps: ScannerDependencies,
     navController: NavController,
     onOpenSettings: () -> Unit,
+    onOpenPro: () -> Unit = {},
 ) {
     composable<ScanDocumentRoute> {
         DocumentRoute(
@@ -42,6 +49,15 @@ fun NavGraphBuilder.scannerScreens(
             onRetakePage = { pageId -> navController.navigate(ScanCaptureRoute(replacePageId = pageId)) },
             onOpenDraft = { navController.navigate(ScanEditRoute) { launchSingleTop = true } },
             onOpenSettings = onOpenSettings,
+            isProUnlocked = deps::isProUnlocked,
+            onOpenOcr = { navController.navigate(ScanOcrRoute) { launchSingleTop = true } },
+            onOpenPro = onOpenPro,
+        )
+    }
+    composable<ScanOcrRoute> {
+        OcrRoute(
+            viewModel = viewModel(factory = OcrViewModel.factory(deps)),
+            onNavigateBack = { navController.navigateUp() },
         )
     }
     composable<ScanCaptureRoute> { entry ->
@@ -62,6 +78,7 @@ fun NavGraphBuilder.scannerScreens(
         EditRoute(
             viewModel = viewModel(factory = EditViewModel.factory(deps)),
             onFinished = { navController.popBackStack(ScanDocumentRoute, inclusive = false) },
+            onOpenPro = onOpenPro,
         )
     }
 }

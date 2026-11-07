@@ -39,6 +39,7 @@ internal fun SettingsScreenRoute(
     onNavigateBack: () -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenPro: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -56,6 +57,7 @@ internal fun SettingsScreenRoute(
         onNavigateBack = onNavigateBack,
         onOpenPrivacy = onOpenPrivacy,
         onOpenAbout = onOpenAbout,
+        onOpenPro = onOpenPro,
     )
 }
 
@@ -77,6 +79,7 @@ fun SettingsScreen(
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenPro: (() -> Unit)? = null,
 ) {
     Scaffold(
         modifier = modifier,
@@ -99,6 +102,7 @@ fun SettingsScreen(
                     onOpenLanguageSettings = onOpenLanguageSettings,
                     onOpenPrivacy = onOpenPrivacy,
                     onOpenAbout = onOpenAbout,
+                    onOpenPro = onOpenPro,
                 )
             }
         }
@@ -115,6 +119,7 @@ private fun SettingsContent(
     onOpenLanguageSettings: () -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenPro: (() -> Unit)?,
 ) {
     Column(
         modifier = Modifier
@@ -149,6 +154,16 @@ private fun SettingsContent(
                 icon = SimpleToolsIcons.Language,
                 trailingIcon = SimpleToolsIcons.OpenInNew,
                 onClick = onOpenLanguageSettings,
+            )
+        }
+
+        if (onOpenPro != null) {
+            SettingsSectionHeader(stringResource(R.string.feature_settings_pro_section))
+            SettingsItem(
+                title = stringResource(R.string.feature_settings_pro_title),
+                summary = stringResource(R.string.feature_settings_pro_summary),
+                icon = SimpleToolsIcons.Info,
+                onClick = onOpenPro,
             )
         }
 

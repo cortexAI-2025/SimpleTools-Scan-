@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pro_title">SimpleTools Scan PRO</string>
+    <string name="pro_tagline">One purchase, yours for good. No subscription.</string>
+
+    <string name="pro_status_active">PRO is unlocked on this device.</string>
+    <string name="pro_status_offline">PRO is unlocked. The purchase was verified earlier, so it works offline.</string>
+    <string name="pro_status_pending">Your purchase is waiting for confirmation from Google Play.</string>
+    <string name="pro_status_checking">Checking your licence…</string>
+    <string name="pro_status_unreachable">The licence cannot be checked right now. Connect to the internet, then check again.</string>
+    <string name="pro_status_unavailable">Purchases are not available on this device.</string>
+    <string name="pro_status_not_purchased">PRO is not unlocked on this Google account.</string>
+    <string name="pro_retry">Check again</string>
+
+    <string name="pro_compare_title">Free or PRO</string>
+    <string name="pro_column_free">Free</string>
+    <string name="pro_column_pro">PRO</string>
+    <string name="pro_row_scan">Scan with the camera or import a photo</string>
+    <string name="pro_row_edges">Automatic edge detection, perspective and rotation</string>
+    <string name="pro_row_filters">Colour, grey and black and white filters</string>
+    <string name="pro_row_document">Multi-page documents, PDF, save and share</string>
+    <string name="pro_row_offline">Works offline, no account, no ads</string>
+    <string name="pro_row_ocr">Text recognition in French and English, offline</string>
+    <string name="pro_row_copy_search">Copy and search the recognised text, export TXT</string>
+    <string name="pro_row_searchable_pdf">Searchable PDF with a text layer</string>
+    <string name="pro_row_contrast">Contrast adjustment per page</string>
+    <string name="pro_included">Included</string>
+    <string name="pro_not_included">Not included</string>
+
+    <string name="pro_price_label">One-time price</string>
+    <string name="pro_price_unknown">Price not available right now.</string>
+    <string name="pro_price_note">Paid once, no subscription. The price is the one Google Play shows for your country.</string>
+    <string name="pro_buy">Unlock PRO</string>
+    <string name="pro_restore">Restore my purchases</string>
+
+    <string name="pro_privacy_title">Privacy and offline use</string>
+    <string name="pro_privacy_body">Your photos and documents are never uploaded. Text recognition runs on this phone, with a model included in the app. The free features never need a connection. Google Play handles the payment and tells the app whether PRO is owned; the app never sees your payment details.</string>
+
+    <string name="pro_purchase_success">PRO is unlocked. Thank you!</string>
+    <string name="pro_purchase_pending">Purchase received. PRO unlocks once Google Play confirms it.</string>
+    <string name="pro_purchase_failed">The purchase did not complete. Nothing was charged.</string>
+    <string name="pro_store_unavailable">Google Play is not reachable right now. Check your connection and try again.</string>
+    <string name="pro_restore_success">Purchase restored. PRO is unlocked.</string>
+    <string name="pro_restore_nothing">No PRO purchase was found on this Google account.</string>
+    <string name="pro_restore_failed">The restore did not complete. Try again.</string>
+    <string name="pro_mark_none">—</string>
+</resources>

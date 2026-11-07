@@ -8,9 +8,15 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.media.ExifInterface
 import com.simpletools.core.scanengine.CropQuad
+import com.simpletools.core.scanengine.EdgeDetector
+import com.simpletools.core.scanengine.GrayImage
+import com.simpletools.core.scanengine.OtsuThreshold
+import com.simpletools.core.scanengine.PageContrast
 import com.simpletools.core.scanengine.PageTransform
 import com.simpletools.core.scanengine.PixelSize
 import com.simpletools.core.scanengine.Rotation
+import com.simpletools.core.scanengine.ScanFilter
+import com.simpletools.core.scanengine.ScanTreatment
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -81,7 +87,15 @@ class ImageProcessor(
      * turned by [rotation], with its longest side at most [maxLongSide].
      */
     @Throws(IOException::class)
-    fun renderPage(source: File, sourceSize: PixelSize, quad: CropQuad, rotation: Rotation, maxLongSide: Int): Bitmap {
+    fun renderPage(
+        source: File,
+        sourceSize: PixelSize,
+        quad: CropQuad,
+        rotation: Rotation,
+        maxLongSide: Int,
+        filter: ScanFilter = ScanFilter.Color,
+        contrast: Int = 0,
+    ): Bitmap {
         // Decode only the resolution the output needs.
         val full = PageTransform.compute(quad, sourceSize.width, sourceSize.height, rotation, maxLongSide)
         val natural = PageTransform.compute(quad, sourceSize.width, sourceSize.height, rotation, Int.MAX_VALUE)
@@ -99,6 +113,7 @@ class ImageProcessor(
             canvas.drawColor(Color.WHITE)
             val matrix = Matrix().apply { setValues(transform.matrix) }
             canvas.drawBitmap(bitmap, matrix, Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG))
+            applyTreatment(output, filter, contrast)
             return output
         } finally {
             bitmap.recycle()
@@ -107,8 +122,16 @@ class ImageProcessor(
 
     /** Renders and saves the final page; returns its size. */
     @Throws(IOException::class)
-    fun savePage(source: File, sourceSize: PixelSize, quad: CropQuad, rotation: Rotation, target: File): PixelSize {
-        val page = renderPage(source, sourceSize, quad, rotation, PAGE_MAX_SIDE)
+    fun savePage(
+        source: File,
+        sourceSize: PixelSize,
+        quad: CropQuad,
+        rotation: Rotation,
+        target: File,
+        filter: ScanFilter = ScanFilter.Color,
+        contrast: Int = 0,
+    ): PixelSize {
+        val page = renderPage(source, sourceSize, quad, rotation, PAGE_MAX_SIDE, filter, contrast)
         try {
             writeJpeg(page, target, PAGE_QUALITY)
             return PixelSize(page.width, page.height)
@@ -116,6 +139,60 @@ class ImageProcessor(
             page.recycle()
         }
     }
+
+    /** Finds the sheet of paper in an upright photo (see [EdgeDetector]); null when there is none. */
+    fun detectPage(source: File): CropQuad? {
+        val bitmap = decodeSampled(source, EDGE_DETECTION_MAX_SIDE) ?: return null
+        try {
+            val w = bitmap.width
+            val h = bitmap.height
+            val pixels = IntArray(w * h)
+            bitmap.getPixels(pixels, 0, w, 0, 0, w, h)
+            val levels = IntArray(w * h) { luminanceOf(pixels[it]) }
+            return EdgeDetector.detect(GrayImage(w, h, levels))
+        } finally {
+            bitmap.recycle()
+        }
+    }
+
+    /**
+     * Applies a page filter and a contrast adjustment to every pixel, in place. The same code runs for
+     * the preview and for the saved page, so what the user sees is what is saved.
+     */
+    fun applyTreatment(bitmap: Bitmap, filter: ScanFilter, contrast: Int) {
+        if (filter == ScanFilter.Color && contrast == 0) return
+        val w = bitmap.width
+        val h = bitmap.height
+        val pixels = IntArray(w * h)
+        bitmap.getPixels(pixels, 0, w, 0, 0, w, h)
+        val gain = PageContrast.gain(contrast)
+        when (filter) {
+            ScanFilter.Color -> for (i in pixels.indices) {
+                val c = pixels[i]
+                val r = ScanTreatment.adjustLevel((c shr 16) and 0xFF, gain)
+                val g = ScanTreatment.adjustLevel((c shr 8) and 0xFF, gain)
+                val b = ScanTreatment.adjustLevel(c and 0xFF, gain)
+                pixels[i] = (0xFF shl 24) or (r shl 16) or (g shl 8) or b
+            }
+            ScanFilter.Grayscale -> for (i in pixels.indices) {
+                pixels[i] = ScanTreatment.argbGray(ScanTreatment.adjustLevel(luminanceOf(pixels[i]), gain))
+            }
+            ScanFilter.BlackAndWhite -> {
+                val levels = IntArray(pixels.size) { ScanTreatment.adjustLevel(luminanceOf(pixels[it]), gain) }
+                val histogram = IntArray(256)
+                for (level in levels) histogram[level]++
+                val threshold = OtsuThreshold.compute(histogram)
+                for (i in pixels.indices) pixels[i] = ScanTreatment.argbGray(ScanTreatment.binarize(levels[i], threshold))
+            }
+        }
+        bitmap.setPixels(pixels, 0, w, 0, 0, w, h)
+    }
+
+    /** A decoded copy of a saved page for text recognition: large enough to read small print. */
+    fun decodeForOcr(file: File): Bitmap? = decodeSampled(file, OCR_MAX_SIDE)
+
+    private fun luminanceOf(argb: Int): Int =
+        ScanTreatment.luminance((argb shr 16) and 0xFF, (argb shr 8) and 0xFF, argb and 0xFF)
 
     private fun writeJpeg(bitmap: Bitmap, target: File, quality: Int) {
         target.parentFile?.mkdirs()
@@ -149,6 +226,12 @@ class ImageProcessor(
         /** ≈ A4 at 300 dpi: sharp text when printed, ~0.5–1 MB per page. */
         const val PAGE_MAX_SIDE = 3508
         const val PREVIEW_MAX_SIDE = 1600
+
+        /** Photo size used to find the page corners: enough to see the edges, fast on any phone. */
+        const val EDGE_DETECTION_MAX_SIDE = 320
+
+        /** Page size given to text recognition: small print stays readable. */
+        const val OCR_MAX_SIDE = 2048
         private const val SOURCE_QUALITY = 92
         private const val PAGE_QUALITY = 85
     }
