@@ -18,11 +18,13 @@ dependencies {
     implementation(projects.core.analytics)
     implementation(projects.core.ads)
     implementation(projects.core.billing)
+    implementation(projects.core.billingPlay)
 
     implementation(projects.feature.onboarding)
     implementation(projects.feature.settings)
     implementation(projects.feature.about)
     implementation(projects.feature.scanner)
+    implementation(projects.feature.premium)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

@@ -78,6 +78,9 @@ internal fun DocumentRoute(
     onRetakePage: (String) -> Unit,
     onOpenDraft: () -> Unit,
     onOpenSettings: () -> Unit,
+    isProUnlocked: () -> Boolean = { false },
+    onOpenOcr: () -> Unit = {},
+    onOpenPro: () -> Unit = {},
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -85,6 +88,7 @@ internal fun DocumentRoute(
     var exportDialog by rememberSaveable { mutableStateOf(false) }
     var fileName by rememberSaveable { mutableStateOf("") }
     var pendingSaveName by rememberSaveable { mutableStateOf<String?>(null) }
+    var pendingSearchable by rememberSaveable { mutableStateOf(false) }
     var confirmDelete by rememberSaveable { mutableStateOf<String?>(null) }
     var confirmNew by rememberSaveable { mutableStateOf(false) }
     val defaultName = stringResource(R.string.scan_default_file_name, SimpleDateFormat("yyyy-MM-dd HH.mm", Locale.ROOT).format(Date()))
@@ -92,11 +96,12 @@ internal fun DocumentRoute(
     val saveLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PDF_MIME)) { uri ->
         val name = pendingSaveName ?: return@rememberLauncherForActivityResult
         pendingSaveName = null
-        if (uri == null) viewModel.onSaveCancelled() else viewModel.saveTo(uri, name)
+        if (uri == null) viewModel.onSaveCancelled() else viewModel.saveTo(uri, name, searchable = pendingSearchable)
     }
     val startExport: (ExportAction, String) -> Unit = { action, name ->
-        if (action == ExportAction.Save) {
+        if (action == ExportAction.Save || action == ExportAction.SaveSearchable) {
             pendingSaveName = name
+            pendingSearchable = action == ExportAction.SaveSearchable
             saveLauncher.launch(name)
         } else {
             viewModel.exportForApps(action, name)
@@ -138,6 +143,10 @@ internal fun DocumentRoute(
         onContinueDraft = onOpenDraft,
         onDiscardDraft = viewModel::discardDraft,
         onOpenSettings = onOpenSettings,
+        onOpenOcr = {
+            // PRO: the recognition screen when unlocked, the PRO offer otherwise.
+            if (isProUnlocked()) onOpenOcr() else onOpenPro()
+        },
     )
 
     if (exportDialog) {
@@ -148,7 +157,11 @@ internal fun DocumentRoute(
             onFileNameChange = { fileName = it },
             onAction = { action ->
                 exportDialog = false
-                startExport(action, PdfFileName.withExtension(fileName, defaultName))
+                if (action == ExportAction.SaveSearchable && !isProUnlocked()) {
+                    onOpenPro()
+                } else {
+                    startExport(action, PdfFileName.withExtension(fileName, defaultName))
+                }
             },
             onDismiss = { exportDialog = false },
         )
@@ -221,6 +234,7 @@ internal fun DocumentScreen(
     onContinueDraft: () -> Unit,
     onDiscardDraft: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenOcr: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val hasPages = state.pages.isNotEmpty()
@@ -231,6 +245,11 @@ internal fun DocumentScreen(
             SimpleToolsTopBar(
                 title = rememberAppLabel(),
                 actions = {
+                    if (hasPages) {
+                        IconButton(onClick = onOpenOcr) {
+                            Icon(painterResource(ScanIcons.Document), contentDescription = stringResource(R.string.scan_ocr_action))
+                        }
+                    }
                     if (hasPages || state.hasDraft) {
                         IconButton(onClick = onNewDocument) {
                             Icon(painterResource(ScanIcons.ClearAll), contentDescription = stringResource(R.string.scan_new_document))
@@ -410,6 +429,12 @@ private fun ExportDialog(
                     { onAction(ExportAction.Save) },
                     enabled = valid,
                     icon = ScanIcons.Save,
+                )
+                SimpleToolsSecondaryButton(
+                    stringResource(R.string.scan_save_searchable),
+                    { onAction(ExportAction.SaveSearchable) },
+                    enabled = valid,
+                    icon = ScanIcons.Pdf,
                 )
                 SimpleToolsSecondaryButton(
                     stringResource(R.string.scan_share),

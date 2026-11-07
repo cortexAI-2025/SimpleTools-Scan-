@@ -3,6 +3,7 @@ package com.simpletools.feature.scanner
 import com.simpletools.core.scanengine.CropQuad
 import com.simpletools.core.scanengine.PageDraft
 import com.simpletools.core.scanengine.Rotation
+import com.simpletools.core.scanengine.ScanFilter
 import com.simpletools.core.scanengine.ScanPage
 import com.simpletools.feature.scanner.data.ScanRepository
 import com.simpletools.feature.scanner.data.ScanStorage
@@ -59,12 +60,14 @@ class ScanRepositoryTest {
         repo.addPage("c")
         repo.movePage(2, 0)
         repo.startDraft(draft("d"))
-        repo.updateDraft(CropQuad.default(0.2f), Rotation(1))
+        repo.updateDraft(CropQuad.default(0.2f), Rotation(1), ScanFilter.BlackAndWhite, 20)
 
         val reopened = reopen().current()
         assertEquals(listOf("c", "a", "b"), reopened.pages.map { it.id })
         assertEquals(CropQuad.default(0.2f), reopened.draft?.quad)
         assertEquals(Rotation(1), reopened.draft?.rotation)
+        assertEquals(ScanFilter.BlackAndWhite, reopened.draft?.filter)
+        assertEquals(20, reopened.draft?.contrast)
     }
 
     @Test

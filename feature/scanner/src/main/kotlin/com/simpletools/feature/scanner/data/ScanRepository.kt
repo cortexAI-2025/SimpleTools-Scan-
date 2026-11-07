@@ -4,6 +4,7 @@ import com.simpletools.core.scanengine.CropQuad
 import com.simpletools.core.scanengine.PageDraft
 import com.simpletools.core.scanengine.Rotation
 import com.simpletools.core.scanengine.ScanDocument
+import com.simpletools.core.scanengine.ScanFilter
 import com.simpletools.core.scanengine.ScanPage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -77,9 +78,9 @@ class ScanRepository(
         return started
     }
 
-    suspend fun updateDraft(quad: CropQuad, rotation: Rotation) = update { doc ->
+    suspend fun updateDraft(quad: CropQuad, rotation: Rotation, filter: ScanFilter, contrast: Int) = update { doc ->
         val draft = doc.draft ?: return@update doc
-        doc.copy(draft = draft.copy(quad = quad, rotation = rotation))
+        doc.copy(draft = draft.copy(quad = quad, rotation = rotation, filter = filter, contrast = contrast))
     }
 
     suspend fun discardDraft() = update { doc ->
@@ -92,7 +93,10 @@ class ScanRepository(
     suspend fun commitDraft(page: ScanPage) = update { doc ->
         val draft = doc.draft ?: return@update doc
         doc.pages.firstOrNull { it.id == draft.replacesPageId }?.let { old ->
-            if (old.pageFile != page.pageFile) storage.delete(old.pageFile)
+            if (old.pageFile != page.pageFile) {
+                storage.delete(old.pageFile)
+                storage.deleteOcr(old.pageFile)
+            }
             if (draft.ownsSource && old.sourceFile != page.sourceFile) storage.delete(old.sourceFile)
         }
         doc.commit(page)
@@ -106,6 +110,7 @@ class ScanRepository(
         // An unfinished re-crop of this page keeps its photo and becomes a new page.
         val keepSource = draft != null && draft.sourceFile == page.sourceFile
         storage.delete(page.pageFile)
+        storage.deleteOcr(page.pageFile)
         if (!keepSource) storage.delete(page.sourceFile)
         val newDraft = if (keepSource) draft.copy(replacesPageId = null, ownsSource = true) else draft
         doc.removePage(pageId).copy(draft = newDraft)

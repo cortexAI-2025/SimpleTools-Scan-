@@ -21,6 +21,10 @@ kotlinxSerialization = "1.11.0"
 
 # SimpleTools Scan
 androidxCamera = "1.5.2"
+# Google Play Billing 9.1.0 (released June 2026): one-time "PRO" product.
+billingKtx = "9.1.0"
+# ML Kit text recognition, bundled model (on-device, no download, Latin script: French and English).
+mlkitTextRecognition = "16.0.1"
 
 # Tests
 junit = "4.13.2"
@@ -59,6 +63,10 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "androidxCamera" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "androidxCamera" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "androidxCamera" }
+
+# SimpleTools Scan PRO
+billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billingKtx" }
+mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitTextRecognition" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }

@@ -19,6 +19,10 @@ data class ScanPage(
     val pageHeight: Int,
     val quad: CropQuad,
     val rotation: Rotation = Rotation.None,
+    /** Colour treatment of the page; documents saved before filters existed are [ScanFilter.Color]. */
+    val filter: ScanFilter = ScanFilter.Color,
+    /** Contrast adjustment in percent (see [PageContrast]); 0 for free documents. */
+    val contrast: Int = 0,
 )
 
 /**
@@ -40,6 +44,8 @@ data class PageDraft(
     val rotation: Rotation = Rotation.None,
     val replacesPageId: String? = null,
     val ownsSource: Boolean = true,
+    val filter: ScanFilter = ScanFilter.Color,
+    val contrast: Int = 0,
 )
 
 @Serializable

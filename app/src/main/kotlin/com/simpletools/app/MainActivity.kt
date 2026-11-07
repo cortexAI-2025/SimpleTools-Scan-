@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
                 privacyDeclaration = container.privacyDeclaration,
                 settingsRepository = container.settingsRepository,
                 scanner = container.scanner,
+                billing = container.billing,
                 onboardingCompleted = settings.onboardingCompleted,
                 onOnboardingFinished = viewModel::completeOnboarding,
             )

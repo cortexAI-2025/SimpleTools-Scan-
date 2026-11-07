@@ -1,5 +1,6 @@
 package com.simpletools.feature.scanner.data
 
+import com.simpletools.core.scanengine.OcrPage
 import com.simpletools.core.scanengine.ScanDocument
 import java.io.File
 import java.io.IOException
@@ -20,9 +21,35 @@ class ScanStorage(root: File, cacheDir: File) {
     private val scanDir = File(root, "scan")
     val imagesDir = File(scanDir, "images")
     val exportsDir = File(cacheDir, EXPORTS_DIR)
+    private val ocrDir = File(scanDir, "ocr")
     private val documentFile = File(scanDir, "document.json")
 
     fun file(name: String): File = File(imagesDir, name)
+
+    /** Recognised text of a page, keyed by the page's file name (a re-cropped page gets a new one). */
+    fun readOcr(pageFile: String): OcrPage? {
+        val file = ocrFile(pageFile)
+        if (!file.exists()) return null
+        return OcrPage.decodeOrNull(runCatching { file.readText() }.getOrDefault(""))
+    }
+
+    @Throws(IOException::class)
+    fun writeOcr(pageFile: String, page: OcrPage) {
+        ocrDir.mkdirs()
+        val target = ocrFile(pageFile)
+        val tmp = File(ocrDir, "${target.name}.tmp")
+        tmp.writeText(OcrPage.encode(page))
+        if (!tmp.renameTo(target)) {
+            target.delete()
+            if (!tmp.renameTo(target)) throw IOException("Could not save the recognised text")
+        }
+    }
+
+    fun deleteOcr(pageFile: String) {
+        ocrFile(pageFile).delete()
+    }
+
+    private fun ocrFile(pageFile: String) = File(ocrDir, "$pageFile.json")
 
     /** A new, unique file in [imagesDir]. Only its name is stored in the document. */
     fun newImageFile(kind: String): File {
@@ -72,6 +99,7 @@ class ScanStorage(root: File, cacheDir: File) {
 
     fun deleteAll() {
         imagesDir.deleteRecursively()
+        ocrDir.deleteRecursively()
         exportsDir.deleteRecursively()
     }
 

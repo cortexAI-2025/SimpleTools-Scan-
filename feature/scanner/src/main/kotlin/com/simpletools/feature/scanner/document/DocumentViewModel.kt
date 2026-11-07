@@ -26,7 +26,14 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
-enum class ExportAction { Save, Share, OpenInPdf }
+enum class ExportAction {
+    Save,
+
+    /** PRO: a PDF with an invisible text layer, saved where the user chooses. */
+    SaveSearchable,
+    Share,
+    OpenInPdf,
+}
 
 sealed interface ExportState {
     data object Idle : ExportState
@@ -101,17 +108,18 @@ class DocumentViewModel(private val deps: ScannerDependencies) : ViewModel() {
     }
 
     /** Writes the PDF where the user chose in the system file picker. */
-    fun saveTo(uri: Uri, fileName: String) = launchExport(ExportAction.Save, fileName) { pages, title, onPage ->
-        val resolver = deps.appContext.contentResolver
-        try {
-            val out = resolver.openOutputStream(uri, "wt") ?: throw IOException("Cannot write to $uri")
-            out.use { deps.exporter.write(pages, title, it, onPage) }
-        } catch (e: Exception) {
-            deletePartial(resolver, uri)
-            throw e
+    fun saveTo(uri: Uri, fileName: String, searchable: Boolean = false) =
+        launchExport(if (searchable) ExportAction.SaveSearchable else ExportAction.Save, fileName) { pages, title, onPage ->
+            val resolver = deps.appContext.contentResolver
+            try {
+                val out = resolver.openOutputStream(uri, "wt") ?: throw IOException("Cannot write to $uri")
+                out.use { deps.exporter.write(pages, title, it, searchable, onPage) }
+            } catch (e: Exception) {
+                deletePartial(resolver, uri)
+                throw e
+            }
+            DocumentEvent.Saved(fileName)
         }
-        DocumentEvent.Saved(fileName)
-    }
 
     /** Writes the PDF in the private cache, then hands it to the share sheet or SimpleTools PDF. */
     fun exportForApps(action: ExportAction, fileName: String) = launchExport(action, fileName) { pages, title, onPage ->
@@ -120,7 +128,7 @@ class DocumentViewModel(private val deps: ScannerDependencies) : ViewModel() {
         if (!dir.mkdirs() && !dir.isDirectory) throw IOException("Cannot create $dir")
         val file = File(dir, fileName)
         try {
-            file.outputStream().use { deps.exporter.write(pages, title, it, onPage) }
+            file.outputStream().use { deps.exporter.write(pages, title, it, searchable = false, onPageWritten = onPage) }
         } catch (e: Exception) {
             file.delete()
             throw e

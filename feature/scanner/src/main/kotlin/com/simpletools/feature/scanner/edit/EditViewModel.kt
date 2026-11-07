@@ -10,9 +10,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.simpletools.core.scanengine.Corner
 import com.simpletools.core.scanengine.CropQuad
 import com.simpletools.core.scanengine.NormalizedPoint
+import com.simpletools.core.scanengine.PageContrast
 import com.simpletools.core.scanengine.PageDraft
 import com.simpletools.core.scanengine.PixelSize
 import com.simpletools.core.scanengine.Rotation
+import com.simpletools.core.scanengine.ScanFilter
 import com.simpletools.core.scanengine.ScanPage
 import com.simpletools.feature.scanner.ScannerDependencies
 import com.simpletools.feature.scanner.image.ImageProcessor
@@ -27,6 +29,9 @@ import kotlinx.coroutines.withContext
 
 enum class EditMode { Adjust, Preview }
 
+/** Outcome of the last "detect the page" request. */
+enum class DetectionResult { None, Found, NotFound }
+
 data class EditUiState(
     val loading: Boolean = true,
     val draft: PageDraft? = null,
@@ -34,10 +39,16 @@ data class EditUiState(
     val photo: Bitmap? = null,
     val quad: CropQuad = CropQuad.default(),
     val rotation: Rotation = Rotation.None,
+    val filter: ScanFilter = ScanFilter.Color,
+    /** Contrast in percent; only changed by PRO users (see [proUnlocked]). */
+    val contrast: Int = 0,
+    val proUnlocked: Boolean = false,
     val mode: EditMode = EditMode.Adjust,
     /** The corrected page, rendered from the same code as the saved page. */
     val preview: Bitmap? = null,
     val renderingPreview: Boolean = false,
+    val detecting: Boolean = false,
+    val detection: DetectionResult = DetectionResult.None,
     val saving: Boolean = false,
     val saveFailed: Boolean = false,
     /** True once the page is saved or discarded, or when there is nothing to edit: leave the screen. */
@@ -48,8 +59,8 @@ data class EditUiState(
 }
 
 /**
- * Edits the unfinished page of the document. The corners and rotation are saved with the
- * document after each change, and the mode in the saved state, so the work survives the app
+ * Edits the unfinished page of the document. The corners, rotation, filter and contrast are saved
+ * with the document after each change, and the mode in the saved state, so the work survives the app
  * being closed or recreated.
  */
 class EditViewModel(
@@ -78,7 +89,17 @@ class EditViewModel(
             }
             val mode = savedState.get<String>(KEY_MODE)?.let(EditMode::valueOf) ?: EditMode.Adjust
             state.update {
-                it.copy(loading = false, draft = draft, photo = photo, quad = draft.quad, rotation = draft.rotation, mode = mode)
+                it.copy(
+                    loading = false,
+                    draft = draft,
+                    photo = photo,
+                    quad = draft.quad,
+                    rotation = draft.rotation,
+                    filter = draft.filter,
+                    contrast = draft.contrast,
+                    proUnlocked = deps.isProUnlocked(),
+                    mode = mode,
+                )
             }
             if (mode == EditMode.Preview && state.value.quadValid) renderPreview() else setMode(EditMode.Adjust)
         }
@@ -90,8 +111,27 @@ class EditViewModel(
     fun onCornerReleased() = persist()
 
     fun resetCorners() {
-        state.update { it.copy(quad = CropQuad.default()) }
+        state.update { it.copy(quad = CropQuad.default(), detection = DetectionResult.None) }
         persist()
+    }
+
+    /** Looks for the sheet of paper in the photo and places the corners on it. */
+    fun detectEdges() {
+        val draft = state.value.draft ?: return
+        if (state.value.detecting) return
+        state.update { it.copy(detecting = true, detection = DetectionResult.None) }
+        viewModelScope.launch {
+            val found = withContext(Dispatchers.Default) {
+                runCatching { deps.imageProcessor.detectPage(deps.repository.file(draft.sourceFile)) }.getOrNull()
+            }
+            if (found != null) {
+                state.update { it.copy(quad = found, detecting = false, detection = DetectionResult.Found) }
+                persist()
+                if (state.value.mode == EditMode.Preview) renderPreview()
+            } else {
+                state.update { it.copy(detecting = false, detection = DetectionResult.NotFound) }
+            }
+        }
     }
 
     fun showPreview() {
@@ -108,6 +148,27 @@ class EditViewModel(
         if (state.value.mode == EditMode.Preview) renderPreview()
     }
 
+    /** Free: colour, grey or black and white. */
+    fun setFilter(filter: ScanFilter) {
+        if (state.value.filter == filter) return
+        state.update { it.copy(filter = filter) }
+        persist()
+        if (state.value.mode == EditMode.Preview) renderPreview()
+    }
+
+    /** PRO only: the slider updates the value live; [onContrastReleased] saves it and refreshes the preview. */
+    fun setContrast(percent: Int) {
+        if (!state.value.proUnlocked) return
+        state.update { it.copy(contrast = PageContrast.clamp(percent)) }
+    }
+
+    fun onContrastReleased() {
+        persist()
+        if (state.value.mode == EditMode.Preview) renderPreview()
+    }
+
+    fun detectionShown() = state.update { it.copy(detection = DetectionResult.None) }
+
     fun save() {
         val current = state.value
         val draft = current.draft ?: return
@@ -123,6 +184,8 @@ class EditViewModel(
                         current.quad,
                         current.rotation,
                         target,
+                        current.filter,
+                        current.contrast,
                     )
                 }
             }
@@ -138,6 +201,8 @@ class EditViewModel(
                         pageHeight = size.height,
                         quad = current.quad,
                         rotation = current.rotation,
+                        filter = current.filter,
+                        contrast = current.contrast,
                     ),
                 )
                 state.update { it.copy(saving = false, finished = true) }
@@ -164,7 +229,7 @@ class EditViewModel(
 
     private fun persist() {
         val s = state.value
-        viewModelScope.launch { deps.repository.updateDraft(s.quad, s.rotation) }
+        viewModelScope.launch { deps.repository.updateDraft(s.quad, s.rotation, s.filter, s.contrast) }
     }
 
     private fun renderPreview() {
@@ -181,6 +246,8 @@ class EditViewModel(
                         s.quad,
                         s.rotation,
                         ImageProcessor.PREVIEW_MAX_SIDE,
+                        s.filter,
+                        s.contrast,
                     )
                 }.getOrNull()
             }

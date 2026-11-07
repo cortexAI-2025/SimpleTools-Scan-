@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.simpletools.app.navigation.SimpleToolsNavHost
+import com.simpletools.core.billing.BillingRepository
 import com.simpletools.core.common.AppConfig
 import com.simpletools.core.privacy.PrivacyDeclaration
 import com.simpletools.core.settings.SettingsRepository
@@ -19,6 +20,7 @@ fun SimpleToolsApp(
     privacyDeclaration: PrivacyDeclaration,
     settingsRepository: SettingsRepository,
     scanner: ScannerDependencies,
+    billing: BillingRepository,
     onboardingCompleted: Boolean,
     onOnboardingFinished: () -> Unit,
     navController: NavHostController = rememberNavController(),
@@ -34,6 +36,7 @@ fun SimpleToolsApp(
         privacyDeclaration = privacyDeclaration,
         settingsRepository = settingsRepository,
         scanner = scanner,
+        billing = billing,
         onOnboardingFinished = onOnboardingFinished,
     )
 }

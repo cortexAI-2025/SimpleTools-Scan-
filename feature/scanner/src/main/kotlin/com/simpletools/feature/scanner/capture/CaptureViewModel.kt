@@ -75,13 +75,17 @@ class CaptureViewModel(
                 }
             }
             result.onSuccess { size ->
+                // Free: the page is located in the photo; the default crop is kept when nothing is found.
+                val detected = withContext(Dispatchers.Default) {
+                    runCatching { deps.imageProcessor.detectPage(target) }.getOrNull()
+                }
                 deps.repository.startDraft(
                     PageDraft(
                         id = deps.storage.newId(),
                         sourceFile = target.name,
                         sourceWidth = size.width,
                         sourceHeight = size.height,
-                        quad = CropQuad.default(),
+                        quad = detected ?: CropQuad.default(),
                         replacesPageId = replacePageId,
                         ownsSource = true,
                     ),

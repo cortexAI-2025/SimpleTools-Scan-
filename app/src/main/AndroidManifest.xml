@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!--
         Only the camera, requested when the user takes a photo of a page.
@@ -7,6 +9,16 @@
         Must match permissions.declared in simpletools.properties (checked by the build).
     -->
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!--
+        Removed on purpose. Text recognition (ML Kit, bundled model) pulls in Google's usage-logging
+        transport (transport-backend-cct), which declares INTERNET and ACCESS_NETWORK_STATE. SimpleTools
+        Scan never uses the network: these two permissions are removed from the merged manifest, so the
+        system itself refuses any connection. The build checks that they are not requested
+        (permissions.declared). See docs/PERMISSIONS.md and docs/PLAY_CONSOLE.md (Data safety).
+    -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
 
     <!-- Without a camera, pages can still be imported from photos. -->
     <uses-feature

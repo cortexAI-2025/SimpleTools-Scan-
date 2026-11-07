@@ -1,5 +1,6 @@
 package com.simpletools.core.scanengine
 
+import java.io.ByteArrayOutputStream
 import java.io.Closeable
 import java.io.FilterOutputStream
 import java.io.IOException
@@ -36,7 +37,13 @@ class JpegPdfWriter(output: OutputStream, private val title: String? = null) : C
      * Adds a page showing the JPEG read from [jpeg] (exactly [length] bytes), fitted on A4.
      * @throws IOException when the image is not a usable JPEG or the stream fails.
      */
-    fun addPage(jpeg: InputStream, length: Long, info: JpegInfo, layout: PdfPageLayout = PdfPageLayout.fitA4(info.width, info.height)) {
+    fun addPage(
+        jpeg: InputStream,
+        length: Long,
+        info: JpegInfo,
+        layout: PdfPageLayout = PdfPageLayout.fitA4(info.width, info.height),
+        texts: List<PdfTextRun> = emptyList(),
+    ) {
         check(!finished) { "PDF already finished" }
         require(length > 0) { "Empty image" }
         val colorSpace = if (info.components == 1) "/DeviceGray" else "/DeviceRGB"
@@ -50,17 +57,35 @@ class JpegPdfWriter(output: OutputStream, private val title: String? = null) : C
         if (copied != length) throw IOException("Image size changed while writing ($copied of $length bytes)")
         writeAscii("\nendstream\nendobj\n")
 
-        val content = "q\n${n(layout.imageWidth)} 0 0 ${n(layout.imageHeight)} ${n(layout.imageX)} ${n(layout.imageY)} cm\n/Im0 Do\nQ\n"
-            .toByteArray(Charsets.US_ASCII)
+        val font = if (texts.isEmpty()) null else helveticaObject()
+        val content = ByteArrayOutputStream()
+        content.write(
+            "q\n${n(layout.imageWidth)} 0 0 ${n(layout.imageHeight)} ${n(layout.imageX)} ${n(layout.imageY)} cm\n/Im0 Do\nQ\n"
+                .toByteArray(Charsets.US_ASCII),
+        )
+        // Invisible text (render mode 3): searchable and selectable, never drawn over the image.
+        for (run in texts) {
+            content.write(
+                "BT 3 Tr /F1 ${n(run.fontSize)} Tf ${n(run.horizontalScale)} Tz 1 0 0 1 ${n(run.x)} ${n(run.baseline)} Tm (".toByteArray(Charsets.US_ASCII),
+            )
+            for (byte in PdfTextLayer.encode(run.text)) {
+                val code = byte.toInt() and 0xFF
+                if (code == '('.code || code == ')'.code || code == '\\'.code) content.write('\\'.code)
+                content.write(code)
+            }
+            content.write(") Tj ET\n".toByteArray(Charsets.US_ASCII))
+        }
+        val contentBytes = content.toByteArray()
         val contents = beginObject()
-        writeAscii("<< /Length ${content.size} >>\nstream\n")
-        out.write(content)
+        writeAscii("<< /Length ${contentBytes.size} >>\nstream\n")
+        out.write(contentBytes)
         writeAscii("\nendstream\nendobj\n")
 
+        val fontResource = font?.let { " /Font << /F1 $it 0 R >>" }.orEmpty()
         val page = beginObject()
         writeAscii(
             "<< /Type /Page /Parent $PAGES_OBJECT 0 R /MediaBox [0 0 ${n(layout.pageWidth)} ${n(layout.pageHeight)}] " +
-                "/Resources << /XObject << /Im0 $image 0 R >> >> /Contents $contents 0 R >>\nendobj\n",
+                "/Resources << /XObject << /Im0 $image 0 R >>$fontResource >> /Contents $contents 0 R >>\nendobj\n",
         )
         pageObjects += page
     }
@@ -96,6 +121,16 @@ class JpegPdfWriter(output: OutputStream, private val title: String? = null) : C
     override fun close() {
         out.flush()
     }
+
+    /** The Helvetica font object, written once, the first time a page carries text. */
+    private fun helveticaObject(): Int = helvetica ?: run {
+        val number = beginObject()
+        writeAscii("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>\nendobj\n")
+        helvetica = number
+        number
+    }
+
+    private var helvetica: Int? = null
 
     private fun beginObject(number: Int = nextObject++): Int {
         offsets[number] = out.count

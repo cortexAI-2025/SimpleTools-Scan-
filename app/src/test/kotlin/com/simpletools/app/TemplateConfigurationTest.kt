@@ -10,31 +10,36 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Guards the promises of SimpleTools Scan: no account, no cloud, no ads, no tracking, offline. */
+/**
+ * Guards the promises of SimpleTools Scan: no account, no cloud, no ads, no tracking, offline.
+ * The only purchase is the one-time PRO unlock through Google Play Billing (no subscription).
+ */
 @RunWith(AndroidJUnit4::class)
 class TemplateConfigurationTest {
 
     @Test
-    fun `app is local only, without ads, analytics or billing`() {
+    fun `app is local only, without ads or analytics, with the PRO purchase only`() {
         val config = buildConfigAppConfig()
 
         assertTrue(config.applicationId.startsWith("com.simpletools.scan"))
         assertTrue(config.privacy.localOnly)
         assertFalse(config.privacy.analytics)
         assertFalse(config.monetization.ads)
-        assertFalse(config.monetization.premium)
+        assertTrue(config.monetization.premium)
         assertFalse(config.features.onboarding)
         assertEquals(listOf("en", "fr"), config.supportedLanguages)
     }
 
     @Test
-    fun `only the camera permission is requested, never internet`() {
+    fun `only the camera and the Play purchase permission are requested, never internet`() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val info = context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
-        val external = info.requestedPermissions.orEmpty().filterNot { it.startsWith(context.packageName) }
+        val external = info.requestedPermissions.orEmpty().filterNot { it.startsWith(context.packageName) }.toSet()
+        val expected = setOf("android.permission.CAMERA", "com.android.vending.BILLING")
 
-        assertEquals(listOf("android.permission.CAMERA"), external)
+        assertEquals(expected, external)
         assertFalse(external.contains("android.permission.INTERNET"))
-        assertEquals(listOf("android.permission.CAMERA"), buildConfigAppConfig().declaredPermissions)
+        assertFalse(external.contains("android.permission.ACCESS_NETWORK_STATE"))
+        assertEquals(expected, buildConfigAppConfig().declaredPermissions.toSet())
     }
 }
